@@ -155,7 +155,7 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
             <CardBody>
               <InfoRow>
                 <span className="label">Coleção:</span>
-                <span className="value">{product.dadosEstilo.colecao || '-'}</span>
+                <span className="value">{product.dadosEstilo.colecaoOrigem || '-'}</span>
               </InfoRow>
               <InfoRow>
                 <span className="label">Linha:</span>

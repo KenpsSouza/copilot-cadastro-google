@@ -4,7 +4,7 @@ import { HeaderContainer, LogoArea, LogoText, UserBadge, ActionsArea, HeaderButt
 import { LogOut, ArrowLeft } from 'react-feather';
 
 import { ThemeToggle } from '../ThemeToggle';
-import { AramisLogo } from '../AramisLogo';
+import { BrandCarousel } from '../BrandCarousel';
 
 interface HeaderProps {
   userRole: UserRole;
@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ userRole, onLogout, onBack, showBack })
             <ArrowLeft size={20} />
           </BackButton>
         )}
-        <AramisLogo color="#e4e7eb" />
+        <BrandCarousel variant="header" color="#e4e7eb" interval={1500} />
         <LogoText style={{ marginLeft: '8px' }}>
           <span>Copilot</span>
         </LogoText>

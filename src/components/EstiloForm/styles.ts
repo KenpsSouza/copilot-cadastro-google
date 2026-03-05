@@ -73,6 +73,22 @@ export const FormGrid = styled.div`
   gap: 1.2rem;
 `;
 
+export const TwoColGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const FormSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
 export const FullWidthField = styled.div`
   grid-column: 1 / -1;
 `;

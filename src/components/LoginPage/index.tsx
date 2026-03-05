@@ -1,10 +1,9 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
 import { UserRole } from '../../types';
 import { LoginContainer, GlassCard, HeaderSection, LogoWrapper, Title, Subtitle, ButtonsContainer, RoleButton } from './styles';
 import { Edit3, ShoppingBag } from 'react-feather';
 import { ThemeToggle } from '../ThemeToggle';
-import { AramisLogo } from '../AramisLogo';
+import { BrandCarousel } from '../BrandCarousel';
 
 interface LoginPageProps {
   onLogin: (role: UserRole) => void;
@@ -19,7 +18,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       <GlassCard>
         <HeaderSection>
           <LogoWrapper style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-            <AramisLogo color="#e4e7eb" />
+            <BrandCarousel variant="login" color="#e4e7eb" interval={1500} />
           </LogoWrapper>
           <Title style={{ marginTop: '12px' }}>
             <span>Copilot</span>

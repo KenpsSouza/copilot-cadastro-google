@@ -31,7 +31,7 @@ export const validarEstilo = async (formData: FormData): Promise<AIValidationRes
 
       // Checklist
       checklist.push({ texto: 'Classificação Básica', ok: !!(dadosEstilo.grupo && dadosEstilo.subgrupo && dadosEstilo.nomeProduto) });
-      checklist.push({ texto: 'Características', ok: !!(dadosEstilo.linha && dadosEstilo.colecao && dadosEstilo.modelagem) });
+      checklist.push({ texto: 'Características', ok: !!(dadosEstilo.linha && dadosEstilo.colecaoOrigem && dadosEstilo.modelagem) });
       checklist.push({ texto: 'Detalhamento Técnico', ok: !!(dadosEstilo.descricao && dadosEstilo.descricao.length > 20) });
       checklist.push({ texto: 'Conceito e Inspiração', ok: !!(dadosEstilo.conceito && dadosEstilo.conceito.length > 10) });
 
@@ -158,12 +158,12 @@ export const parseDescricaoIA = async (texto: string): Promise<{ dadosEstilo: Pa
       if (textoLower.includes('premium')) dadosEstilo.linha = 'Premium';
 
       // Coleção
-      if (textoLower.includes('inverno')) dadosEstilo.colecao = 'Inverno 2026';
-      if (textoLower.includes('verão') || textoLower.includes('verao')) dadosEstilo.colecao = 'Verão 2026';
+      if (textoLower.includes('inverno')) dadosEstilo.colecaoOrigem = 'Inverno 2026';
+      if (textoLower.includes('verão') || textoLower.includes('verao')) dadosEstilo.colecaoOrigem = 'Verão 2026';
 
       // Cores
-      if (textoLower.includes('azul') || textoLower.includes('marinho')) dadosEstilo.coresSugeridas = 'Azul Marinho';
-      if (textoLower.includes('preto') || textoLower.includes('branco')) dadosEstilo.coresSugeridas = 'Preto & Branco';
+      if (textoLower.includes('azul') || textoLower.includes('marinho')) dadosEstilo.corPrincipal = 'Azul Marinho';
+      if (textoLower.includes('preto') || textoLower.includes('branco')) dadosEstilo.corPrincipal = 'Preto & Branco';
 
       // Descrição
       dadosEstilo.descricao = texto;

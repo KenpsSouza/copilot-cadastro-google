@@ -84,18 +84,10 @@ export const HeaderSection = styled.div`
 export const LogoWrapper = styled.div`
   width: auto;
   min-width: 180px;
-  height: 80px;
-  border-radius: 20px;
-  background: rgba(15, 17, 23, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 2rem;
-  box-shadow: 
-    0 0 40px rgba(229, 24, 45, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 0.1);
   margin-bottom: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
 `;
 
 export const Title = styled.h1`
