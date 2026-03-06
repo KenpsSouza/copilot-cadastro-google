@@ -64,7 +64,6 @@ export const GlassCard = styled.div`
   box-shadow: 
     0 25px 50px -12px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  animation: ${float} 6s ease-in-out infinite;
 
   @media (max-width: 768px) {
     padding: 2.5rem;
