@@ -1,12 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { FormData, UserRole } from '../../types';
+import { getEstiloProgress } from '../../utils/formData'; // Import the new utility function
 import {
   ListContainer, ListHeader, Title, Grid, Card, CardHeader,
   ProductInfo, ProductName, ProductCategory, StatusTag,
   CardBody, InfoRow, CardFooter, ActionButton,
-  FiltersContainer, SearchWrapper, SearchInput, FilterButton
+  FiltersContainer, SearchWrapper, SearchInput, FilterButton,
+  ProgressContainer, ProgressBar, ProgressLabel // Import progress styles
 } from './styles';
-import { Plus, Clock, Edit3, ShoppingBag, Search } from 'react-feather';
+import { Plus, Clock, Edit3, ShoppingBag, Search, CheckCircle } from 'react-feather'; // Add CheckCircle
 
 interface ListagemProdutosProps {
   products: FormData[];
@@ -26,6 +28,7 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('TODOS');
 
+  // ... (keep getStatusLabel and formatDate the same)
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'EM_DESENVOLVIMENTO': return 'Em Construção';
@@ -42,7 +45,8 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
   };
 
   const filteredAndSortedProdutos = useMemo(() => {
-    let filtered = products.filter(p => {
+      // ... (keep the filtering logic the same)
+        let filtered = products.filter(p => {
       // Role based filtering
       if (userRole === 'compras') {
         if (p.status !== 'CADASTRADO_AGUARDANDO_COMPRAS' && p.status !== 'FINALIZADO') {
@@ -77,6 +81,7 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
   return (
     <ListContainer>
       <ListHeader>
+        {/* ... (keep the header the same) */}
         <Title>Meus Produtos</Title>
         {userRole === 'estilo' && (
           <ActionButton onClick={onNewProduct}>
@@ -87,7 +92,8 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
       </ListHeader>
 
       <FiltersContainer>
-        <SearchWrapper>
+       {/* ... (keep the filters the same) */}
+       <SearchWrapper>
           <Search size={16} />
           <SearchInput 
             placeholder="Buscar por nome ou ID..." 
@@ -136,58 +142,68 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
       </FiltersContainer>
 
       <Grid>
-        {filteredAndSortedProdutos.map((product) => (
-          <Card key={product.id} onClick={() => onSelectProduct(product)}>
-            <CardHeader>
-              <ProductInfo>
-                <ProductName>
-                  {product.dadosEstilo.nomeProduto || 'Produto sem nome'}
-                </ProductName>
-                <ProductCategory>
-                  {product.dadosEstilo.grupo || 'Sem grupo'} {product.dadosEstilo.subgrupo ? `> ${product.dadosEstilo.subgrupo}` : ''}
-                </ProductCategory>
-              </ProductInfo>
-              <StatusTag $status={product.status}>
-                {getStatusLabel(product.status)}
-              </StatusTag>
-            </CardHeader>
+        {filteredAndSortedProdutos.map((product) => {
+          const { preenchidos, total } = getEstiloProgress(product.dadosEstilo);
+          const progress = total > 0 ? (preenchidos / total) * 100 : 0;
 
-            <CardBody>
-              <InfoRow>
-                <span className="label">Coleção:</span>
-                <span className="value">{product.dadosEstilo.colecaoOrigem || '-'}</span>
-              </InfoRow>
-              <InfoRow>
-                <span className="label">Linha:</span>
-                <span className="value">{product.dadosEstilo.linha || '-'}</span>
-              </InfoRow>
-              {product.status !== 'EM_DESENVOLVIMENTO' && (
-                <InfoRow>
-                  <span className="label">Preço:</span>
-                  <span className="value">
-                    {product.dadosCompras.preco ? `R$ ${product.dadosCompras.preco}` : '-'}
-                  </span>
-                </InfoRow>
-              )}
-            </CardBody>
+          return (
+            <Card key={product.id} onClick={() => onSelectProduct(product)}>
+              <CardHeader>
+                <ProductInfo>
+                  <ProductName>
+                    {product.dadosEstilo.nomeProduto || 'Produto sem nome'}
+                  </ProductName>
+                  <ProductCategory>
+                    {product.dadosEstilo.grupo || 'Sem grupo'} {product.dadosEstilo.subgrupo ? `> ${product.dadosEstilo.subgrupo}` : ''}
+                  </ProductCategory>
+                </ProductInfo>
+                <StatusTag $status={product.status}>
+                  {getStatusLabel(product.status)}
+                </StatusTag>
+              </CardHeader>
 
-            <CardFooter>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <Clock size={12} />
-                Atualizado em {formatDate(product.atualizadoEm)}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#e4e7eb' }}>
-                {product.status === 'EM_DESENVOLVIMENTO' ? (
-                  <><Edit3 size={14} /> Editar Estilo</>
-                ) : product.status === 'CADASTRADO_AGUARDANDO_COMPRAS' ? (
-                  <><ShoppingBag size={14} /> Preencher Compras</>
-                ) : (
-                  <><Edit3 size={14} /> Ver Detalhes</>
+              <CardBody>
+                {/* Progress bar for Estilo fields */}
+                {userRole === 'estilo' && product.status === 'EM_DESENVOLVIMENTO' && (
+                  <ProgressContainer>
+                    <ProgressLabel>{preenchidos} de {total} campos preenchidos</ProgressLabel>
+                    <ProgressBar progress={progress} />
+                  </ProgressContainer>
                 )}
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
+                
+                <InfoRow>
+                  <span className="label">Coleção:</span>
+                  <span className="value">{product.dadosEstilo.colecaoOrigem || '-'}</span>
+                </InfoRow>
+                <InfoRow>
+                  <span className="label">Linha:</span>
+                  <span className="value">{product.dadosEstilo.linha || '-'}</span>
+                </InfoRow>
+                {product.status !== 'EM_DESENVOLVIMENTO' && (
+                  <InfoRow>
+                    <span className="label">Preço:</span>
+                    <span className="value">
+                      {product.dadosCompras.preco ? `R$ ${product.dadosCompras.preco}` : '-'}
+                    </span>
+                  </InfoRow>
+                )}
+              </CardBody>
+
+              <CardFooter>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <Clock size={12} />
+                  Atualizado em {formatDate(product.atualizadoEm)}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#e4e7eb' }}>
+                  {userRole === 'estilo' && product.status === 'EM_DESENVOLVIMENTO' && <><Edit3 size={14} /> Editar Estilo</>}
+                  {userRole === 'compras' && <><ShoppingBag size={14} /> Preencher Compras</>}
+                  {product.status === 'CADASTRADO_AGUARDANDO_COMPRAS' && userRole === 'estilo' && <><CheckCircle size={14} /> Enviado</>}
+                  {product.status === 'FINALIZADO' && <><Edit3 size={14} /> Ver Detalhes</>}
+                </div>
+              </CardFooter>
+            </Card>
+          );
+        })}
       </Grid>
     </ListContainer>
   );

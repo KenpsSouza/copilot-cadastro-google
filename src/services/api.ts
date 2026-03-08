@@ -95,87 +95,32 @@ export const validarCompras = async (formData: FormData): Promise<AIValidationRe
 // PARSING DE TEXTO LIVRE (Descreva o Produto com IA)
 // ============================================================================
 
-const MODO_APRESENTACAO = false;
-
 export const parseDescricaoIA = async (texto: string): Promise<{ dadosEstilo: Partial<DadosEstilo>, dadosCompras: Partial<DadosCompras> }> => {
-  if (!MODO_APRESENTACAO) {
-    try {
-      const response = await fetch('/api/webhook/case_produto', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ textoLivre: texto }),
-      });
+  try {
+    const response = await fetch('/api/webhook/case_produto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ textoLivre: texto }),
+    });
 
-      if (response.ok) {
-        alert('✅ SUCESSO (n8n): Conexão perfeita!\n\nO n8n devolveu os dados corretamente. Verifique se os campos preencheram no formulário.');
-        const data = await response.json();
-        return {
-          dadosEstilo: data.dadosEstilo || {},
-          dadosCompras: data.dadosCompras || {}
-        };
-      } else {
-        alert('⚠️ ERRO DE ROTA (n8n):\nO webhook foi encontrado, mas devolveu um erro de servidor.\nStatus: ' + response.status + ' - ' + response.statusText + '\n\nCaindo para o Mock de segurança...');
-      }
-    } catch (error: any) {
-      console.warn('Falha ao conectar com a IA (n8n). Usando fallback mockado.', error);
-      alert('❌ ERRO DE CONEXÃO (n8n):\nFalha total ao tentar falar com o webhook. O n8n está rodando? O CORS está liberado?\n\nErro técnico: ' + error.message + '\n\nCaindo para o Mock de segurança...');
+    if (!response.ok) {
+      // Lança um erro que será capturado pelo bloco catch no App.tsx
+      throw new Error(`O serviço de IA respondeu com status ${response.status}.`);
     }
+
+    const data = await response.json();
+    return {
+      dadosEstilo: data.dadosEstilo || {},
+      dadosCompras: data.dadosCompras || {}
+    };
+
+  } catch (error: any) {
+    // Loga o erro detalhado no console para depuração
+    console.warn('Falha ao processar descrição com IA (n8n). Detalhes:', error.message);
+
+    // Lança um novo erro com uma mensagem amigável para a UI
+    throw new Error('Não foi possível analisar a descrição. O serviço de IA pode estar indisponível.');
   }
-
-  // Fallback (Mock de Segurança)
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const textoLower = texto.toLowerCase();
-      const dadosEstilo: Partial<DadosEstilo> = {};
-      const dadosCompras: Partial<DadosCompras> = {};
-
-      // Lógica mockada simples baseada em palavras-chave no texto
-      
-      // Grupo e Subgrupo
-      if (textoLower.includes('camisa') || textoLower.includes('camisaria')) {
-        dadosEstilo.grupo = 'CAMISARIA';
-        if (textoLower.includes('manga longa') || textoLower.includes('ml')) dadosEstilo.subgrupo = 'Manga Longa';
-        if (textoLower.includes('manga curta') || textoLower.includes('mc')) dadosEstilo.subgrupo = 'Manga Curta';
-      } else if (textoLower.includes('calça') || textoLower.includes('calca')) {
-        dadosEstilo.grupo = 'CALCA';
-        if (textoLower.includes('jeans')) dadosEstilo.subgrupo = 'Jeans';
-        if (textoLower.includes('alfaiataria')) dadosEstilo.subgrupo = 'Alfaiataria';
-      } else {
-        dadosEstilo.grupo = 'CAMISARIA';
-        dadosEstilo.subgrupo = 'Manga Longa';
-      }
-
-      // Modelagem
-      if (textoLower.includes('slim')) dadosEstilo.modelagem = 'Slim Fit';
-      if (textoLower.includes('regular')) dadosEstilo.modelagem = 'Regular Fit';
-      if (textoLower.includes('oversized')) dadosEstilo.modelagem = 'Oversized';
-
-      // Linha
-      if (textoLower.includes('social')) dadosEstilo.linha = 'Social';
-      if (textoLower.includes('casual')) dadosEstilo.linha = 'Casual';
-      if (textoLower.includes('premium')) dadosEstilo.linha = 'Premium';
-
-      // Coleção
-      if (textoLower.includes('inverno')) dadosEstilo.colecaoOrigem = 'Inverno 2026';
-      if (textoLower.includes('verão') || textoLower.includes('verao')) dadosEstilo.colecaoOrigem = 'Verão 2026';
-
-      // Cores
-      if (textoLower.includes('azul') || textoLower.includes('marinho')) dadosEstilo.corPrincipal = 'Azul Marinho';
-      if (textoLower.includes('preto') || textoLower.includes('branco')) dadosEstilo.corPrincipal = 'Preto & Branco';
-
-      // Descrição
-      dadosEstilo.descricao = texto;
-      
-      // Nome sugerido
-      if (dadosEstilo.grupo && dadosEstilo.subgrupo) {
-        dadosEstilo.nomeProduto = `${dadosEstilo.grupo === 'CAMISARIA' ? 'Camisa' : dadosEstilo.grupo} ${dadosEstilo.subgrupo} ${dadosEstilo.modelagem || ''}`.trim();
-      } else {
-        dadosEstilo.nomeProduto = 'Produto Gerado por IA';
-      }
-
-      resolve({ dadosEstilo, dadosCompras });
-    }, 1500); // Delay para simular chamada de API de IA (LLM)
-  });
 };

@@ -6,11 +6,12 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, ...props }, ref) => {
+  ({ label, value, ...props }, ref) => {
+    const isFilled = value != null && value !== '';
     return (
       <InputWrapper>
         <Label>{label}</Label>
-        <StyledInput ref={ref} {...props} />
+        <StyledInput ref={ref} value={value} {...props} data-filled={isFilled} />
       </InputWrapper>
     );
   }
@@ -23,11 +24,12 @@ export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 }
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
-  ({ label, ...props }, ref) => {
+  ({ label, value, ...props }, ref) => {
+    const isFilled = value != null && value !== '';
     return (
       <InputWrapper>
         <Label>{label}</Label>
-        <StyledTextArea ref={ref} {...props} />
+        <StyledTextArea ref={ref} value={value} {...props} data-filled={isFilled} />
       </InputWrapper>
     );
   }

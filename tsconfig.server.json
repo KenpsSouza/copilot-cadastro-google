@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "dist/server",
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "server.ts",
+    "src/services/api.ts",
+    "src/types.ts"
+  ],
+  "exclude": [
+    "src/components",
+    "src/styles",
+    "src/data",
+    "src/App.tsx",
+    "src/main.tsx"
+  ]
+}

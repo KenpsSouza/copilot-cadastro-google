@@ -1,53 +1,110 @@
+
 import express from "express";
-import { createServer as createViteServer } from "vite";
+import fs from "fs-extra";
+import cors from "cors";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// =========================================================================
+// VARIÁVEIS DE AMBIENTE E PLACEHOLDERS
+// =========================================================================
+// INSTRUÇÃO: Substitua a URL abaixo pela sua URL de produção do n8n.
+const N8N_WEBHOOK_URL = 'https://zt-n8ndev.aramis.com.br/webhook-test/case_produto'; 
+// =========================================================================
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = parseInt(process.env.PORT || '3000', 10);
+  const dbPath = path.join(__dirname, './db.json');
 
-  // Middleware to parse JSON bodies
+  app.use(cors());
   app.use(express.json());
 
-  // API route to proxy the webhook request to n8n
-  app.post("/api/webhook/case_produto", async (req, res) => {
+  // Rota para obter todos os produtos
+  app.get("/api/products", async (req, res) => {
     try {
-      const response = await fetch('https://zt-n8ndev.aramis.com.br/webhook-test/case_produto', {
+      await fs.ensureFile(dbPath);
+      const db = await fs.readJson(dbPath).catch(() => ({ products: [] }));
+      res.json(db.products || []);
+    } catch (error) {
+      console.error("GET /api/products error:", error);
+      res.status(500).json({ error: 'Failed to retrieve products' });
+    }
+  });
+
+  // Rota para criar/atualizar um produto
+  app.post("/api/products", async (req, res) => {
+    try {
+      const productToSave = req.body;
+      if (!productToSave || !productToSave.id) {
+        return res.status(400).json({ error: "Invalid product data provided." });
+      }
+
+      let products = [];
+      try {
+        await fs.ensureFile(dbPath);
+        const db = await fs.readJson(dbPath);
+        if (db && Array.isArray(db.products)) {
+          products = db.products;
+        }
+      } catch (error) {
+        // Arquivo vazio ou inválido, começa com array vazio
+      }
+
+      const productIndex = products.findIndex(p => p.id === productToSave.id);
+      if (productIndex !== -1) {
+        products[productIndex] = productToSave;
+      } else {
+        products.push(productToSave);
+      }
+
+      await fs.writeJson(dbPath, { products }, { spaces: 2 });
+      res.status(200).json(productToSave);
+
+    } catch (error: any) {
+      console.error("POST /api/products error:", error);
+      res.status(500).json({ error: `Failed to save product: ${error.message}` });
+    }
+  });
+
+  // Rota de PROXY para o webhook do n8n (Ação de Categorização)
+  app.post("/api/webhook/case_produto", async (req, res) => {
+    console.log(`[PROXY] Recebida requisição para ${N8N_WEBHOOK_URL}`);
+    try {
+      const response = await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(req.body),
       });
 
       if (!response.ok) {
-        return res.status(response.status).json({ error: response.statusText });
+        const errorText = await response.text();
+        console.error(`[PROXY] Erro do n8n: ${response.status} - ${errorText}`);
+        return res.status(response.status).json({ error: errorText });
       }
 
       const data = await response.json();
+      console.log("[PROXY] Resposta recebida do n8n e enviada ao cliente.");
       res.json(data);
     } catch (error: any) {
-      console.error("Proxy error:", error);
-      res.status(500).json({ error: error.message });
+      console.error("[PROXY] Falha na comunicação com o n8n:", error);
+      res.status(500).json({ error: `Proxy request failed: ${error.message}` });
     }
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    // In production, serve static files from dist
-    app.use(express.static("dist"));
-    app.get("*", (req, res) => {
-      res.sendFile("dist/index.html", { root: "." });
+  if (process.env.NODE_ENV === 'production') {
+    const clientDistPath = path.join(__dirname, '../client');
+    app.use(express.static(clientDistPath));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(clientDistPath, 'index.html'));
     });
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Backend server rodando em http://localhost:${PORT}`);
   });
 }
 

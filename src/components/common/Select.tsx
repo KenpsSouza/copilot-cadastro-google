@@ -1,9 +1,11 @@
 import React from 'react';
-import { SelectWrapper, Label, StyledSelect } from './Select.styles';
+// Correcting the import path based on our previous change
+import { InputWrapper, Label } from './Input.styles';
+import { StyledSelect } from './Input.styles'; // We moved StyledSelect to Input.styles.ts
 
 type OptionItem = string | { value: string; label: string };
 
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {   
+interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     label: string;
     options: OptionItem[];
     placeholder?: string;
@@ -16,10 +18,12 @@ const getOptionLabel = (opt: OptionItem): string =>
     typeof opt === 'string' ? opt : opt.label;
 
 export const Select: React.FC<SelectProps> = ({ label, name, value, onChange, options, placeholder, ...rest }) => {
+    const isFilled = value != null && value !== '';
+
     return (
-        <SelectWrapper>
+        <InputWrapper> 
             <Label htmlFor={name}>{label}</Label>
-            <StyledSelect id={name} name={name} value={value} onChange={onChange} {...rest}>
+            <StyledSelect id={name} name={name} value={value} onChange={onChange} data-filled={isFilled} {...rest}>
                 <option value="">{placeholder || `Selecione ${label.toLowerCase()}`}</option>
                 {options.map(opt => (
                     <option key={getOptionValue(opt)} value={getOptionValue(opt)}>
@@ -27,7 +31,7 @@ export const Select: React.FC<SelectProps> = ({ label, name, value, onChange, op
                     </option>
                 ))}
             </StyledSelect>
-        </SelectWrapper>
+        </InputWrapper>
     );
 };
 

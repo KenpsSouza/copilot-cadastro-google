@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { FormData, DadosCompras, DadosEstilo, FichaColecao, INITIAL_FICHA_COLECAO, FAIXA_PRECO_OPTIONS, CATEGORIA_FINAL_OPTIONS, COLECAO_OPTIONS } from '../../types';
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  FormData, DadosCompras, DadosEstilo, FichaColecao, INITIAL_FICHA_COLECAO,
+  FAIXA_PRECO_OPTIONS, CATEGORIA_FINAL_OPTIONS, COLECAO_OPTIONS, ALL_ESTILO_FIELDS
+} from '../../types';
 import {
   FormContainer, SectionTitle, FormGrid, ButtonGroup, ActionButton,
   ReadOnlySection, ReadOnlySectionHeader, ReadOnlyHeaderLeft, ReadOnlyHeaderIcon,
@@ -12,13 +15,12 @@ import { Zap, CheckCircle, Eye, EyeOff, ChevronDown, Edit3, Lock } from 'react-f
 
 interface ComprasFormProps {
   formData: FormData;
-  onChange: (section: 'dadosEstilo' | 'dadosCompras', field: keyof DadosCompras, value: string) => void;
+  onChange: (section: 'dadosCompras', field: keyof DadosCompras | '__fichasColecao', value: any) => void;
   onValidarIA: () => void;
   onFinalizar: () => void;
   isValidating: boolean;
 }
 
-/* Mapeamento legível dos campos do Estilo agrupados */
 const ESTILO_GROUPS: { title: string; fields: { key: keyof DadosEstilo; label: string }[] }[] = [
   {
     title: 'Identificação',
@@ -101,7 +103,6 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
   const [fichaSelecionada, setFichaSelecionada] = useState<FichaColecao | null>(null);
   const [fichaDraft, setFichaDraft] = useState<FichaColecao | null>(null);
 
-  // Permite acionar handleNovaFicha de fora (FichasColecaoPanel)
   useEffect(() => {
     function handleEvent() {
       handleNovaFicha();
@@ -115,52 +116,50 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
     onChange('dadosCompras', name as keyof DadosCompras, value);
   };
 
-  // Conta campos preenchidos do estilo
-  const camposEstiloPreenchidos = Object.values(dadosEstilo).filter(v => v && v.trim() !== '').length;
-  const totalCamposEstilo = Object.keys(dadosEstilo).length;
+  const { camposEstiloPreenchidos, totalCamposEstilo } = useMemo(() => {
+    const total = ALL_ESTILO_FIELDS.length;
+    const preenchidos = ALL_ESTILO_FIELDS.reduce((acc, key) => {
+      const value = dadosEstilo[key];
+      if (value && String(value).trim() !== '') {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+    return { camposEstiloPreenchidos: preenchidos, totalCamposEstilo: total };
+  }, [dadosEstilo]);
 
 
-
-  // Inicia criação de nova ficha
   const handleNovaFicha = () => {
     setFichaSelecionada(null);
     setFichaDraft({ ...INITIAL_FICHA_COLECAO, id: `FICHA-${Date.now()}` });
   };
 
-  // Inicia edição de ficha existente
   const handleEditarFicha = (ficha: FichaColecao) => {
     setFichaSelecionada(ficha);
     setFichaDraft({ ...ficha });
   };
 
-  // Salva ficha (nova ou edição)
   const handleSalvarFicha = () => {
     if (!fichaDraft) return;
     let novasFichas: FichaColecao[];
     if (fichaSelecionada) {
-      // Edição
       novasFichas = fichasColecao.map(f => f.id === fichaDraft.id ? { ...fichaDraft, atualizadoEm: new Date().toISOString() } : f);
     } else {
-      // Nova
       novasFichas = [
         ...fichasColecao,
         { ...fichaDraft, criadoEm: new Date().toISOString(), atualizadoEm: new Date().toISOString() }
       ];
     }
-    // Atualiza no formData (via onChange, hack: campo especial)
     onChange('dadosCompras', '__fichasColecao' as any, novasFichas as any);
     setFichaSelecionada(null);
     setFichaDraft(null);
   };
 
-  // Cancela edição/criação
   const handleCancelarFicha = () => {
     setFichaSelecionada(null);
     setFichaDraft(null);
   };
 
-  // Renderiza formulário de ficha de coleção
-  // Excluir ficha de coleção
   const handleExcluirFicha = () => {
     if (!fichaDraft) return;
     if (!window.confirm('Tem certeza que deseja excluir esta ficha de coleção?')) return;
@@ -309,9 +308,6 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
     <FormContainer>
       {renderFichaForm()}
 
-      {/* ═══════════════════════════════════════════════
-          SEÇÃO READ-ONLY — Dados preenchidos pelo Estilo
-      ═══════════════════════════════════════════════ */}
       <ReadOnlySection>
         <ReadOnlySectionHeader onClick={() => setEstiloOpen(!estiloOpen)}>
           <ReadOnlyHeaderLeft>
@@ -331,7 +327,6 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
 
         <ReadOnlyBody $open={estiloOpen}>
           {ESTILO_GROUPS.map(group => {
-            // Só mostra grupo se tem pelo menos 1 campo preenchido
             const hasValues = group.fields.some(f => dadosEstilo[f.key] && dadosEstilo[f.key].trim() !== '');
             if (!hasValues) return null;
 
@@ -354,9 +349,6 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
         </ReadOnlyBody>
       </ReadOnlySection>
 
-      {/* ═══════════════════════════════════════════════
-          SEPARADOR VISUAL
-      ═══════════════════════════════════════════════ */}
       <SectionDivider>
         <SectionDividerLabel>
           <Edit3 size={12} />
@@ -364,9 +356,6 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
         </SectionDividerLabel>
       </SectionDivider>
 
-      {/* ═══════════════════════════════════════════════
-          SEÇÃO EDITÁVEL — Campos do Compras
-      ═══════════════════════════════════════════════ */}
       <EditableSection>
         <div>
           <SectionTitle>Fornecimento</SectionTitle>

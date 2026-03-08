@@ -13,8 +13,6 @@ export type ProductStatus =
   | 'EM_COMPLEMENTO_COMPRAS'
   | 'FINALIZADO';
 
-
-
 // Dados preenchidos pelo Estilo
 export interface DadosEstilo {
   // ── Identificação ──
@@ -250,6 +248,8 @@ export const INITIAL_FORM_DATA: FormData = {
   fichasColecao: [],
   status: 'EM_DESENVOLVIMENTO',
 };
+
+export const ALL_ESTILO_FIELDS = Object.keys(INITIAL_DADOS_ESTILO) as (keyof DadosEstilo)[];
 
 // ========================
 // OPÇÕES DE DROPDOWNS
