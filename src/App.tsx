@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyles, theme } from './styles/GlobalStyles';
 import {
-  UserRole, FormData, DadosEstilo, DadosCompras,
+  UserRole, FormData, DadosEstilo, DadosCompras, FichaColecao,
   AIValidationResult, INITIAL_FORM_DATA,
 } from './types';
 import { validarEstilo, validarCompras, parseDescricaoIA } from './services/api';
@@ -12,6 +12,7 @@ import EstiloForm from './components/EstiloForm';
 import ComprasForm from './components/ComprasForm';
 import ListagemProdutos from './components/ListagemProdutos';
 import AIPanel from './components/AIPanel';
+import FichasColecaoPanel from './components/FichasColecaoPanel';
 import BottomBar from './components/BottomBar';
 import {
   AppContainer, MainContent, FormArea, PanelArea, Footer,
@@ -419,6 +420,35 @@ function App() {
   }, []);
 
   // ========================
+  // FICHAS DE COLEÇÃO - PAINEL LATERAL
+  // ========================
+  const handleSalvarFichaPainel = useCallback((fichaAtualizada: FichaColecao) => {
+    const fichasAtualizadas = formData.fichasColecao
+      ? formData.fichasColecao.map(f => f.id === fichaAtualizada.id ? fichaAtualizada : f)
+      : [fichaAtualizada];
+
+    const updated: FormData = {
+      ...formData,
+      fichasColecao: fichasAtualizadas,
+      atualizadoEm: new Date().toISOString(),
+    };
+    setFormData(updated);
+  }, [formData]);
+
+  const handleExcluirFichaPainel = useCallback((fichaId: string) => {
+    const fichasAtualizadas = formData.fichasColecao
+      ? formData.fichasColecao.filter(f => f.id !== fichaId)
+      : [];
+
+    const updated: FormData = {
+      ...formData,
+      fichasColecao: fichasAtualizadas,
+      atualizadoEm: new Date().toISOString(),
+    };
+    setFormData(updated);
+  }, [formData]);
+
+  // ========================
   // AÇÕES GERAIS
   // ========================
   const handleLogin = (role: UserRole) => {
@@ -577,12 +607,27 @@ function App() {
           </FormArea>
 
           <PanelArea $blurred={userRole === 'estilo' && showDescriptionCard}>
-            <AIPanel
-              validation={validation}
-              role={userRole}
-              onAIDescriptionParse={showDescriptionCard ? undefined : handleAIDescriptionParse}
-              isParsing={isParsing}
-            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              {/* Fichas de Coleção - apenas para Compras */}
+              {userRole === 'compras' && (
+                <FichasColecaoPanel
+                  fichasColecao={formData.fichasColecao || []}
+                  onNovaFicha={() => {
+                    const event = new CustomEvent('novaFichaColecao');
+                    window.dispatchEvent(event);
+                  }}
+                  onSalvarFicha={handleSalvarFichaPainel}
+                  onExcluirFicha={handleExcluirFichaPainel}
+                />
+              )}
+              {/* Painel IA */}
+              <AIPanel
+                validation={validation}
+                role={userRole}
+                onAIDescriptionParse={showDescriptionCard ? undefined : handleAIDescriptionParse}
+                isParsing={isParsing}
+              />
+            </div>
           </PanelArea>
         </MainContent>
 

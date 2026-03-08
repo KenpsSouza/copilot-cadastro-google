@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormData, DadosCompras, DadosEstilo, FichaColecao, INITIAL_FICHA_COLECAO, FAIXA_PRECO_OPTIONS, CATEGORIA_FINAL_OPTIONS, COLECAO_OPTIONS } from '../../types';
 import {
   FormContainer, SectionTitle, FormGrid, ButtonGroup, ActionButton,
@@ -7,7 +7,7 @@ import {
   ReadOnlyGroupTitle, ReadOnlyField, ReadOnlyLabel, ReadOnlyValue,
   SectionDivider, SectionDividerLabel, EditableSection,
 } from './styles';
-import { Input, Select } from '../common';
+import { Input, Select, TextArea } from '../common';
 import { Zap, CheckCircle, Eye, EyeOff, ChevronDown, Edit3, Lock } from 'react-feather';
 
 interface ComprasFormProps {
@@ -101,6 +101,15 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
   const [fichaSelecionada, setFichaSelecionada] = useState<FichaColecao | null>(null);
   const [fichaDraft, setFichaDraft] = useState<FichaColecao | null>(null);
 
+  // Permite acionar handleNovaFicha de fora (FichasColecaoPanel)
+  useEffect(() => {
+    function handleEvent() {
+      handleNovaFicha();
+    }
+    window.addEventListener('novaFichaColecao', handleEvent);
+    return () => window.removeEventListener('novaFichaColecao', handleEvent);
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     onChange('dadosCompras', name as keyof DadosCompras, value);
@@ -149,110 +158,6 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
     setFichaSelecionada(null);
     setFichaDraft(null);
   };
-
-  // Renderiza lista de fichas de coleção
-  const renderFichasColecao = () => (
-    <div style={{ marginBottom: 32 }}>
-      <SectionTitle>Fichas de Coleção</SectionTitle>
-      {(!fichasColecao || fichasColecao.length === 0) && (
-        <div style={{ color: '#888', fontSize: 14, marginBottom: 12 }}>Nenhuma ficha cadastrada para este produto.</div>
-      )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        {fichasColecao && fichasColecao.map(ficha => (
-          <div
-            key={ficha.id}
-            style={{
-              border: fichaSelecionada?.id === ficha.id ? '2px solid #e5182d' : '1.5px solid #23242c',
-              borderRadius: 14,
-              padding: '18px 20px 14px 20px',
-              background: fichaSelecionada?.id === ficha.id ? 'rgba(229,24,45,0.08)' : '#181a20',
-              cursor: 'pointer',
-              boxShadow: fichaSelecionada?.id === ficha.id ? '0 4px 18px #e5182d33' : '0 2px 8px #0006',
-              transition: 'box-shadow 0.2s, border 0.2s, background 0.2s',
-              position: 'relative',
-              minHeight: 70,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-            }}
-            onClick={() => handleEditarFicha(ficha)}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 2 }}>
-              <span style={{
-                background: 'linear-gradient(90deg, #e5182d 60%, #ff3333 100%)',
-                color: '#fff',
-                fontWeight: 700,
-                fontSize: 14,
-                borderRadius: 7,
-                padding: '2px 12px',
-                letterSpacing: 0.5,
-                boxShadow: '0 1px 4px #e5182d22',
-                minWidth: 90,
-                textAlign: 'center',
-              }}>{ficha.colecao || 'Coleção'}</span>
-              <span style={{ color: '#1a1d27', fontWeight: 600, fontSize: 16 }}>{ficha.comprador || 'Comprador'}</span>
-              <span style={{ color: '#b3b3b3', fontSize: 13, marginLeft: 8 }}>{ficha.criadoEm ? new Date(ficha.criadoEm).toLocaleDateString() : ''}</span>
-            </div>
-            <div style={{ fontSize: 14.5, color: '#444', marginBottom: 1 }}>
-              <b>Cores:</b> {ficha.cores || '-'}
-              <span style={{ margin: '0 10px' }}>|</span>
-              <b>Fornecedor:</b> {ficha.fornecedor || '-'}
-              <span style={{ margin: '0 10px' }}>|</span>
-              <b>Preço Planejado:</b> <span style={{ color: '#e5182d', fontWeight: 700 }}>{ficha.precoPlanejado ? `R$ ${ficha.precoPlanejado}` : '-'}</span>
-            </div>
-            <div style={{ fontSize: 13.5, color: '#888', marginTop: 2 }}>
-              <b>Cluster:</b> {ficha.cluster || '-'}
-              <span style={{ margin: '0 10px' }}>|</span>
-              <b>Cartela:</b> {ficha.cartelaCor || '-'}
-              <span style={{ margin: '0 10px' }}>|</span>
-              <b>Pirâmide:</b> {ficha.piramide || '-'}
-            </div>
-            <div style={{ fontSize: 13, color: '#b3b3b3', marginTop: 2 }}>
-              <b>Categorias:</b> {ficha.categorias && ficha.categorias.length > 0 ? ficha.categorias.join(', ') : '-'}
-              <span style={{ margin: '0 10px' }}>|</span>
-              <b>Campanha:</b> {ficha.campanha || '-'}
-              <span style={{ margin: '0 10px' }}>|</span>
-              <b>Nacional/Importado:</b> {ficha.nacionalImportado || '-'}
-            </div>
-            {ficha.observacoes && (
-              <div style={{ fontSize: 13, color: '#e5182d', marginTop: 4, fontStyle: 'italic' }}>
-                {ficha.observacoes}
-              </div>
-            )}
-            <div style={{ position: 'absolute', top: 12, right: 18, display: 'flex', gap: 8 }}>
-              <button
-                type="button"
-                style={{
-                  background: 'none', border: 'none', color: '#e5182d', cursor: 'pointer', fontWeight: 600, fontSize: 13, padding: '2px 6px', borderRadius: 5, transition: 'background 0.15s',
-                }}
-                onClick={e => { e.stopPropagation(); handleEditarFicha(ficha); }}
-                title="Editar ficha"
-              >Editar</button>
-              {/**
-               * Botão de exclusão de ficha (desabilitado/comentado)
-               * Para ativar, remova os comentários e implemente handleExcluirFicha
-               */}
-              {/**
-                Para ativar o botão de exclusão, remova os comentários e implemente handleExcluirFicha
-                Exemplo:
-                <button
-                  type="button"
-                  style={{ ... }}
-                  onClick={e => { e.stopPropagation(); handleExcluirFicha(ficha.id); }}
-                  title="Excluir ficha"
-                >Excluir</button>
-              */}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div style={{ marginTop: 20 }}>
-        <ActionButton $variant="secondary" type="button" onClick={handleNovaFicha}>
-          + Nova Ficha de Coleção
-        </ActionButton>
-      </div>
-    </div>
-  );
 
   // Renderiza formulário de ficha de coleção
   // Excluir ficha de coleção
@@ -374,13 +279,12 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
           />
         </FormGrid>
         <div style={{ marginTop: 16 }}>
-          <Input
+          <TextArea
             label="Observações"
             name="observacoes"
             value={fichaDraft.observacoes}
             onChange={e => setFichaDraft({ ...fichaDraft, observacoes: e.target.value })}
             placeholder="Observações da ficha"
-            as="textarea"
             style={{ minHeight: 48 }}
           />
         </div>
@@ -403,7 +307,6 @@ const ComprasForm: React.FC<ComprasFormProps> = ({
 
   return (
     <FormContainer>
-      {renderFichasColecao()}
       {renderFichaForm()}
 
       {/* ═══════════════════════════════════════════════
