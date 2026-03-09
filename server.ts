@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 // VARIÁVEIS DE AMBIENTE E PLACEHOLDERS
 // =========================================================================
 // INSTRUÇÃO: Substitua a URL abaixo pela sua URL de produção do n8n.
-const N8N_WEBHOOK_URL = 'https://zt-n8ndev.aramis.com.br/webhook-test/case_produto'; 
+const N8N_WEBHOOK_URL = 'https://zt-n8ndev.aramis.com.br/webhook-test/1d86cf58-5405-4ef8-8a10-4be53f0bfd77'; 
 // =========================================================================
 
 const __filename = fileURLToPath(import.meta.url);
@@ -87,8 +87,17 @@ async function startServer() {
       }
 
       const data = await response.json();
-      console.log("[PROXY] Resposta recebida do n8n e enviada ao cliente.");
-      res.json(data);
+
+      // O n8n pode retornar um array com um objeto. Extraímos o primeiro elemento se for o caso.
+      let responseData = data;
+      if (Array.isArray(data) && data.length > 0) {
+        console.log("[PROXY] Resposta do n8n é um array, extraindo o primeiro elemento.");
+        responseData = data[0];
+      }
+      
+      console.log("[PROXY] Resposta processada enviada ao cliente.");
+      res.json(responseData);
+
     } catch (error: any) {
       console.error("[PROXY] Falha na comunicação com o n8n:", error);
       res.status(500).json({ error: `Proxy request failed: ${error.message}` });
