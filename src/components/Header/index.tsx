@@ -18,11 +18,6 @@ const Header: React.FC<HeaderProps> = ({ userRole, onLogout, onBack, showBack })
   return (
     <HeaderContainer>
       <LogoArea>
-        {showBack && (
-          <BackButton onClick={onBack} title="Voltar">
-            <ArrowLeft size={20} />
-          </BackButton>
-        )}
         <BrandCarousel variant="header" color="#e4e7eb" interval={1500} />
         <LogoText style={{ marginLeft: '8px' }}>
           <span>Copilot</span>
@@ -33,6 +28,11 @@ const Header: React.FC<HeaderProps> = ({ userRole, onLogout, onBack, showBack })
       </LogoArea>
 
       <ActionsArea>
+        {showBack && (
+          <BackButton onClick={onBack} title="Voltar">
+            <ArrowLeft size={20} />
+          </BackButton>
+        )}
         <ThemeToggle />
         <HeaderButton $variant="ghost" onClick={onLogout}>
           <LogOut size={16} />

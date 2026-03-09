@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { FichaColecao, COLECAO_OPTIONS } from '../types';
+import { PanelContainer, FichaCard } from './FichasColecaoPanel.styles';
 
 interface FichasColecaoPanelProps {
   fichasColecao: FichaColecao[];
@@ -59,16 +61,7 @@ const FichasColecaoPanel: React.FC<FichasColecaoPanelProps> = ({
 
   return (
     <>
-      <div style={{
-        background: '#1a1d27',
-        border: '1.5px solid #23242c',
-        borderRadius: 16,
-        padding: '1.5rem 2rem',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.5rem',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-      }}>
+      <PanelContainer>
         {/* Cabeçalho com título e botão */}
         <div style={{
           display: 'flex',
@@ -131,39 +124,25 @@ const FichasColecaoPanel: React.FC<FichasColecaoPanelProps> = ({
         }} />
 
         {(!fichasColecao || fichasColecao.length === 0) && (
-          <div style={{ color: '#888', fontSize: 14, marginBottom: 12 }}>
+          <FichaCard style={{
+            border: '1.5px dashed rgba(255,255,255,0.13)',
+            color: '#888',
+            fontSize: 15,
+            fontWeight: 500,
+            justifyContent: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}>
             Nenhuma ficha cadastrada para este produto.
-          </div>
+          </FichaCard>
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {fichasColecao &&
             fichasColecao.map(ficha => (
-              <div
+              <FichaCard
                 key={ficha.id}
                 onClick={() => handleAbrirFicha(ficha)}
-                style={{
-                  border: '1.5px solid #23242c',
-                  borderRadius: 12,
-                  padding: '14px 16px',
-                  background: '#181a20',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  minHeight: 'auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 6,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.border = '1.5px solid #e5182d';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(229, 24, 45, 0.2)';
-                  e.currentTarget.style.background = 'rgba(229,24,45,0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.border = '1.5px solid #23242c';
-                  e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.background = '#181a20';
-                }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{
@@ -188,15 +167,15 @@ const FichasColecaoPanel: React.FC<FichasColecaoPanelProps> = ({
                 <div style={{ fontSize: 12, color: '#6b7280' }}>
                   Preço: <span style={{ color: '#e5182d', fontWeight: 600 }}>R$ {ficha.precoPlanejado || '-'}</span>
                 </div>
-              </div>
+              </FichaCard>
             ))}
         </div>
-      </div>
+      </PanelContainer>
 
       {/* Modal Unificado - Visualização/Edição - Renderizado em Portal */}
       {fichaDraft && createPortal(
         <>
-          {/* Overlay escuro */}
+          {/* Overlay escuro com glassmorphism */}
           <div
             onClick={() => {
               setFichaSelecionada(null);
@@ -206,38 +185,47 @@ const FichasColecaoPanel: React.FC<FichasColecaoPanelProps> = ({
             style={{
               position: 'fixed',
               inset: 0,
-              background: 'rgba(0, 0, 0, 0.7)',
+              background: 'rgba(18, 20, 28, 0.55)',
               zIndex: 9998,
               animation: 'fadeIn 0.3s ease',
-              backdropFilter: 'blur(6px)',
+              backdropFilter: 'blur(10px) saturate(1.2)',
+              WebkitBackdropFilter: 'blur(10px) saturate(1.2)',
               pointerEvents: 'auto',
+              transition: 'backdrop-filter 0.3s',
             }}
           />
 
-          {/* Modal Unificado */}
+          {/* Modal Unificado com efeito liquid glass */}
           <div
             style={{
               position: 'fixed',
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              background: '#1a1d27',
-              border: '1.5px solid #23242c',
-              borderRadius: 20,
-              padding: '3rem',
+              background: 'rgba(26, 29, 39, 0.82)',
+              border: '1.5px solid rgba(255,255,255,0.13)',
+              borderRadius: 28,
+              padding: '3.2rem 2.5rem',
               maxWidth: 1100,
+              width: '96vw',
               maxHeight: '80vh',
               overflowY: 'auto',
               zIndex: 9999,
-              boxShadow: '0 25px 80px rgba(0, 0, 0, 0.6), 0 0 100px rgba(229, 24, 45, 0.2)',
+              boxShadow: '0 25px 80px rgba(0, 0, 0, 0.55), 0 0 100px rgba(229, 24, 45, 0.13)',
               animation: 'slideUp 0.3s ease',
               pointerEvents: 'auto',
+              backdropFilter: 'blur(18px) saturate(1.2)',
+              WebkitBackdropFilter: 'blur(18px) saturate(1.2)',
+              transition: 'box-shadow 0.25s, border 0.25s, background 0.25s',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2.2rem',
             }}
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               e.preventDefault();
             }}
-            onMouseDown={(e) => {
+            onMouseDown={e => {
               e.stopPropagation();
             }}
           >

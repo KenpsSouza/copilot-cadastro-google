@@ -1,9 +1,10 @@
 import styled from 'styled-components';
+import { ds } from '../../styles/designSystem';
 
 // ... (keep all existing styles)
 
 export const ListContainer = styled.div`
-    padding: 2rem;
+    padding: ${ds.spacing.lg};
 `;
 
 export const ListHeader = styled.div`
@@ -14,24 +15,25 @@ export const ListHeader = styled.div`
 `;
 
 export const Title = styled.h1`
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #f3f4f6; /* gray-100 */
+    font-size: ${ds.font.size.xl};
+    font-weight: ${ds.font.weight.bold};
+    color: #f3f4f6;
 `;
 
 export const Grid = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
+    gap: ${ds.spacing.lg};
 `;
 
 export const Card = styled.div`
-    background: #1f2937; /* gray-800 */
-    border-radius: 12px;
+    background: #1f2937;
+    border-radius: ${ds.radius.md};
     border: 1px solid rgba(255, 255, 255, 0.1);
     overflow: hidden;
     transition: all 0.2s ease-in-out;
     cursor: pointer;
+    box-shadow: ${ds.shadow.sm};
 
     &:hover {
         transform: translateY(-4px);

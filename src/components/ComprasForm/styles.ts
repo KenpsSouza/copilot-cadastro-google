@@ -7,15 +7,18 @@ const iridescentBorder = keyframes`
 `;
 
 export const FormContainer = styled.div`
-  background: #1a1d27;
-  border-radius: 16px;
-  padding: 1.5rem 2rem;
+  background: rgba(26, 29, 39, 0.72);
+  border-radius: 22px;
+  padding: 2.2rem 2.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.7rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 1.5px 8px 0 rgba(229,24,45,0.08);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  transition: box-shadow 0.25s, border 0.25s, background 0.25s;
 
   /* Borda animada iridescente mais sutil */
   &::before {
@@ -75,18 +78,28 @@ export const FormGrid = styled.div`
 
 export const ButtonGroup = styled.div`
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 18px;
+  border-top: 1.5px solid rgba(255,255,255,0.13);
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 2.5rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  background: rgba(255,255,255,0.01);
+  backdrop-filter: blur(2.5px) saturate(1.05);
+  -webkit-backdrop-filter: blur(2.5px) saturate(1.05);
+  transition: background 0.18s, border 0.18s;
+
+  & > * {
+    transition: box-shadow 0.18s, transform 0.18s;
+  }
 
   @media (max-width: 600px) {
     flex-direction: column;
-    
-    button {
-      width: 100%;
-    }
+    gap: 12px;
+    align-items: stretch;
+    padding-top: 1rem;
+    margin-top: 1.3rem;
+    border-top-width: 1px;
   }
 `;
 
@@ -94,14 +107,18 @@ export const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' |
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  gap: 10px;
+  padding: 1rem 2.2rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
   border: none;
+  box-shadow: 0 2px 12px 0 rgba(229,24,45,0.10);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
+  transition: box-shadow 0.22s, border 0.22s, background 0.22s, color 0.18s, transform 0.18s;
+  user-select: none;
 
   ${({ $variant }) => {
     switch ($variant) {
@@ -109,33 +126,42 @@ export const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' |
         return `
           background: linear-gradient(135deg, rgb(229, 24, 45), rgb(255, 51, 51));
           color: white;
-          box-shadow: 0 4px 12px rgba(229, 24, 45, 0.2);
+          box-shadow: 0 4px 16px rgba(229, 24, 45, 0.18);
+          border: 1.5px solid rgba(229, 24, 45, 0.18);
           
           &:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(229, 24, 45, 0.3);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 28px rgba(229, 24, 45, 0.22);
+            filter: brightness(1.08);
+          }
+          &:active:not(:disabled) {
+            transform: scale(0.98);
+            filter: brightness(0.97);
           }
         `;
       case 'danger':
         return `
-          background: rgba(239, 68, 68, 0.1);
+          background: rgba(239, 68, 68, 0.13);
           color: #ef4444;
-          border: 1px solid rgba(239, 68, 68, 0.2);
+          border: 1.5px solid rgba(239, 68, 68, 0.22);
           
           &:hover:not(:disabled) {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.22);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.18);
           }
         `;
       case 'secondary':
       default:
         return `
-          background: rgba(255, 255, 255, 0.05);
-          color: #d1d5db;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.07);
+          color: #e4e7eb;
+          border: 1.5px solid rgba(255, 255, 255, 0.13);
           
           &:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            background: rgba(255, 255, 255, 0.13);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(229, 24, 45, 0.10);
           }
         `;
     }
@@ -144,6 +170,7 @@ export const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' |
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    filter: grayscale(0.2);
   }
 `;
 

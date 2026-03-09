@@ -1,14 +1,15 @@
 import styled from 'styled-components';
+import { ds } from '../../styles/designSystem';
 
 export const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
+  padding: ${ds.spacing.md} ${ds.spacing.xl};
   background: rgba(26, 29, 39, 0.8);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.13);
+  box-shadow: ${ds.shadow.md};
   z-index: 50;
 `;
 
@@ -39,14 +40,14 @@ export const BackButton = styled.button`
 `;
 
 export const LogoText = styled.h1`
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: ${ds.font.size.lg};
+  font-weight: ${ds.font.weight.extrabold};
   color: #e4e7eb;
   margin: 0;
   letter-spacing: -0.02em;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: ${ds.spacing.sm};
 
   span {
     background: linear-gradient(135deg, rgb(229, 24, 45), rgb(255, 51, 51));
@@ -59,27 +60,24 @@ export const LogoText = styled.h1`
 export const UserBadge = styled.div<{ $role: 'estilo' | 'compras' }>`
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 700;
+  gap: ${ds.spacing.xs};
+  padding: ${ds.spacing.xs} ${ds.spacing.md};
+  border-radius: ${ds.radius.xl};
+  font-size: ${ds.font.size.xs};
+  font-weight: ${ds.font.weight.bold};
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  
-  background: ${({ $role }) => 
-    $role === 'estilo' 
-      ? 'rgba(229, 24, 45, 0.15)' 
+  background: ${({ $role }) =>
+    $role === 'estilo'
+      ? 'rgba(229, 24, 45, 0.15)'
       : 'rgba(59, 130, 246, 0.15)'};
-      
-  color: ${({ $role }) => 
-    $role === 'estilo' 
-      ? 'rgb(229, 24, 45)' 
+  color: ${({ $role }) =>
+    $role === 'estilo'
+      ? 'rgb(229, 24, 45)'
       : '#60a5fa'};
-      
-  border: 1px solid ${({ $role }) => 
-    $role === 'estilo' 
-      ? 'rgba(229, 24, 45, 0.3)' 
+  border: 1.5px solid ${({ $role }) =>
+    $role === 'estilo'
+      ? 'rgba(229, 24, 45, 0.3)'
       : 'rgba(59, 130, 246, 0.3)'};
 `;
 

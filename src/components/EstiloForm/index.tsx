@@ -17,7 +17,7 @@ import { Input } from '../common/Input';
 import { InputWrapper, Label, StyledTextArea } from '../common/Input.styles';
 import {
   FormContainer, SectionTitle, FormGrid, FullWidthField,
-  ButtonGroup, ActionButton, FormSection, TwoColGrid,
+  ButtonGroup, ActionButton, FormSection, TwoColGrid, RequiredMark
 } from './styles';
 
 interface EstiloFormProps {
@@ -63,10 +63,12 @@ const EstiloForm: React.FC<EstiloFormProps> = ({
           SEÇÃO 1 - IDENTIFICAÇÃO
       ═══════════════════════════════════════════════ */}
       <FormSection>
-        <SectionTitle>Identificação</SectionTitle>
+        <SectionTitle>
+          Identificação<RequiredMark>*</RequiredMark>
+        </SectionTitle>
         <FormGrid>
-          <Select label="BU *" name="bu" value={dados.bu} onChange={handleSelect} options={BU_OPTIONS} placeholder="Selecione a BU" />
-          <Select label="Griffe *" name="griffe" value={dados.griffe} onChange={handleSelect} options={GRIFFE_OPTIONS} placeholder="Selecione a Griffe" />
+          <Select label={<>BU<RequiredMark>*</RequiredMark></>} name="bu" value={dados.bu} onChange={handleSelect} options={BU_OPTIONS} placeholder="Selecione a BU" />
+          <Select label={<>Griffe<RequiredMark>*</RequiredMark></>} name="griffe" value={dados.griffe} onChange={handleSelect} options={GRIFFE_OPTIONS} placeholder="Selecione a Griffe" />
           <Select label="Linha" name="linha" value={dados.linha} onChange={handleSelect} options={LINHA_OPTIONS} />
           <Select label="Sexo" name="sexo" value={dados.sexo} onChange={handleSelect} options={SEXO_OPTIONS} />
           <Select label="Coleção de Origem" name="colecaoOrigem" value={dados.colecaoOrigem} onChange={handleSelect} options={COLECAO_OPTIONS} />
@@ -90,26 +92,13 @@ const EstiloForm: React.FC<EstiloFormProps> = ({
           SEÇÃO 3 - CLASSIFICAÇÃO
       ═══════════════════════════════════════════════ */}
       <FormSection>
-        <SectionTitle>Classificação</SectionTitle>
+        <SectionTitle>
+          Classificação<RequiredMark>*</RequiredMark>
+        </SectionTitle>
         <FormGrid>
           <Select label="Grade" name="grade" value={dados.grade} onChange={handleSelect} options={GRADE_OPTIONS} placeholder="Selecione a grade" />
-          <Select
-            label="Grupo *"
-            name="grupo"
-            value={dados.grupo}
-            onChange={handleSelect}
-            options={grupos}
-            placeholder="Selecione o grupo"
-          />
-          <Select
-            label="Subgrupo *"
-            name="subgrupo"
-            value={dados.subgrupo}
-            onChange={handleSelect}
-            options={subgruposFiltrados}
-            disabled={!dados.grupo}
-            placeholder={dados.grupo ? 'Selecione o subgrupo' : 'Selecione um grupo primeiro'}
-          />
+          <Select label={<>Grupo<RequiredMark>*</RequiredMark></>} name="grupo" value={dados.grupo} onChange={handleSelect} options={grupos} placeholder="Selecione o grupo" />
+          <Select label={<>Subgrupo<RequiredMark>*</RequiredMark></>} name="subgrupo" value={dados.subgrupo} onChange={handleSelect} options={subgruposFiltrados} disabled={!dados.grupo} placeholder={dados.grupo ? 'Selecione o subgrupo' : 'Selecione um grupo primeiro'} />
           <Select label="Modelagem" name="modelagem" value={dados.modelagem} onChange={handleSelect} options={MODELAGEM_OPTIONS} />
           <Input label="Base MP" id="baseMP" name="baseMP" value={dados.baseMP} onChange={handleInput} placeholder="Base matéria-prima" />
           <Select label="Tipo" name="tipo" value={dados.tipo} onChange={handleSelect} options={TIPO_OPTIONS} />

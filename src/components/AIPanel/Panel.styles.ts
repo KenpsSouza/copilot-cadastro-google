@@ -1,4 +1,6 @@
+
 import styled, { keyframes } from 'styled-components';
+import { ds } from '../../styles/designSystem';
 
 export const typing = keyframes`
   0%, 100% { transform: translateY(0); opacity: 0.5; }
@@ -8,11 +10,11 @@ export const typing = keyframes`
 export const TypingIndicator = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: ${ds.spacing.xs};
   span {
     width: 6px;
     height: 6px;
-    background-color: rgb(229, 24, 45);
+    background-color: #e5182d;
     border-radius: 50%;
     animation: ${typing} 1.4s infinite ease-in-out both;
   }
@@ -24,16 +26,16 @@ export const AITextArea = styled.textarea`
   width: 100%;
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1rem;
+  border-radius: ${ds.radius.md};
+  padding: ${ds.spacing.md};
   color: #e4e7eb;
   resize: vertical;
   outline: none;
-  transition: all 0.3s ease;
-  font-family: inherit;
+  transition: box-shadow 0.22s, border 0.22s, background 0.22s;
+  font-family: ${ds.font.family};
 
   &:focus {
-    border-color: rgb(229, 24, 45);
+    border-color: #e5182d;
     box-shadow: 0 0 0 2px rgba(229, 24, 45, 0.2);
     background: rgba(0, 0, 0, 0.4);
   }
@@ -43,30 +45,69 @@ export const AITextArea = styled.textarea`
   }
 `;
 
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: ${ds.spacing.md};
+  border-top: 1.5px solid rgba(255,255,255,0.13);
+  padding-top: ${ds.spacing.lg};
+  margin-top: ${ds.spacing.xl};
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  background: rgba(255,255,255,0.01);
+  backdrop-filter: blur(2.5px) saturate(1.05);
+  -webkit-backdrop-filter: blur(2.5px) saturate(1.05);
+  transition: background 0.18s, border 0.18s;
+
+  & > * {
+    transition: box-shadow 0.18s, transform 0.18s;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: ${ds.spacing.sm};
+    align-items: stretch;
+    padding-top: 1rem;
+    margin-top: 1.3rem;
+    border-top-width: 1px;
+  }
+`;
+
+// Refinamento do AIParseButton para visual premium
 export const AIParseButton = styled.button`
-  background: linear-gradient(135deg, rgb(229, 24, 45), rgb(255, 51, 51));
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 0.8rem 1.5rem;
-  font-weight: 600;
+  background: linear-gradient(135deg, #e5182d, #ff3333);
+  color: #fff;
+  border: 1.5px solid rgba(229, 24, 45, 0.18);
+  border-radius: ${ds.radius.lg};
+  padding: ${ds.spacing.md} ${ds.spacing.xl};
+  font-weight: ${ds.font.weight.bold};
+  font-size: ${ds.font.size.md};
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: ${ds.spacing.sm};
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: ${ds.shadow.md};
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
+  transition: box-shadow 0.22s, border 0.22s, background 0.22s, color 0.18s, transform 0.18s;
+  user-select: none;
   position: relative;
   overflow: hidden;
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    filter: grayscale(0.2);
   }
 
   &:not(:disabled):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(229, 24, 45, 0.3);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: ${ds.shadow.lg};
+    filter: brightness(1.08);
+  }
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+    filter: brightness(0.97);
   }
 
   .siri-shine {
@@ -87,7 +128,7 @@ export const AIParseButton = styled.button`
 export const CardsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: ${ds.spacing.md};
   width: 100%;
 `;
 
@@ -100,14 +141,14 @@ export const PanelCard = styled.div<{ $delay?: number }>`
   background: rgba(30, 33, 43, 0.6);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 1.2rem;
+  border-radius: ${ds.radius.lg};
+  padding: ${ds.spacing.lg};
   animation: ${slideIn} 0.4s ease forwards;
   animation-delay: ${({ $delay }) => $delay || 0}s;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  gap: ${ds.spacing.sm};
+  box-shadow: ${ds.shadow.md};
   
   &.holographic {
     background: linear-gradient(135deg, rgba(30,33,43,0.8), rgba(40,30,50,0.8));
@@ -116,27 +157,27 @@ export const PanelCard = styled.div<{ $delay?: number }>`
 `;
 
 export const PanelTitle = styled.h4`
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: ${ds.font.size.sm};
+  font-weight: ${ds.font.weight.bold};
   color: #e4e7eb;
   margin: 0;
   letter-spacing: 0.02em;
 `;
 
 export const ScoreNumber = styled.div`
-  font-size: 2.5rem;
-  font-weight: 900;
+  font-size: ${ds.font.size.xl};
+  font-weight: ${ds.font.weight.black};
   color: #fff;
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: ${ds.spacing.xs};
 `;
 
 export const ScoreBar = styled.div`
   width: 100%;
   height: 8px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  border-radius: ${ds.radius.sm};
   overflow: hidden;
 `;
 
@@ -144,14 +185,14 @@ export const ScoreFill = styled.div<{ percent: number }>`
   height: 100%;
   width: ${({ percent }) => percent}%;
   background: linear-gradient(90deg, rgb(229, 24, 45), rgb(255, 51, 51));
-  border-radius: 4px;
+  border-radius: ${ds.radius.sm};
   transition: width 0.5s ease;
 `;
 
 export const ProgressText = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
+  font-size: ${ds.font.size.xs};
   color: #9ca3af;
 `;
 
@@ -159,11 +200,11 @@ export const AlertItem = styled.div<{ tipo: string }>`
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 0.85rem;
+  font-size: ${ds.font.size.sm};
   color: #d1d5db;
   background: rgba(255, 255, 255, 0.03);
   padding: 0.6rem;
-  border-radius: 8px;
+  border-radius: ${ds.radius.sm};
   border-left: 3px solid ${({ tipo }) => {
     switch (tipo) {
       case 'error': return '#ef4444';
@@ -189,24 +230,24 @@ export const AlertSugestao = styled.div`
   margin-top: 4px;
   color: rgb(255, 102, 102);
   font-style: italic;
-  font-size: 0.8rem;
+  font-size: ${ds.font.size.xs};
 `;
 
 export const SuggestionItem = styled.div`
   display: flex;
   align-items: flex-start;
-  font-size: 0.85rem;
+  font-size: ${ds.font.size.sm};
   color: #e5e7eb;
   background: rgba(255, 255, 255, 0.03);
   padding: 0.6rem;
-  border-radius: 8px;
+  border-radius: ${ds.radius.sm};
   line-height: 1.4;
 `;
 
 export const ChecklistItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: ${ds.spacing.xs};
   padding: 0.2rem 0;
 `;
 

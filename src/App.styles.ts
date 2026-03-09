@@ -1,4 +1,6 @@
+
 import styled, { keyframes, css } from 'styled-components';
+import { ds } from './styles/designSystem';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px) scale(0.97); }
@@ -49,8 +51,8 @@ export const AppContainer = styled.div`
 export const MainContent = styled.main`
   flex: 1;
   display: flex;
-  padding: 0.8rem 1rem;
-  gap: 0.8rem;
+  padding: ${ds.spacing.sm} ${ds.spacing.md};
+  gap: ${ds.spacing.sm};
   overflow-y: auto;
   align-items: flex-start;
   position: relative;
