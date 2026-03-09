@@ -2,7 +2,6 @@ import React from 'react';
 import { UserRole } from '../../types';
 import { LoginContainer, GlassCard, HeaderSection, LogoWrapper, Title, Subtitle, ButtonsContainer, RoleButton } from './styles';
 import { Edit3, ShoppingBag } from 'react-feather';
-import { ThemeToggle } from '../ThemeToggle';
 import { BrandCarousel } from '../BrandCarousel';
 
 interface LoginPageProps {
@@ -12,9 +11,27 @@ interface LoginPageProps {
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   return (
     <LoginContainer>
-      <div style={{ position: 'absolute', top: '2rem', right: '2rem', zIndex: 100 }}>
-        <ThemeToggle />
-      </div>
+      {/* Vídeo de fundo animado */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          objectFit: 'cover',
+          zIndex: 0,
+          pointerEvents: 'none',
+          background: '#0f1117', // fallback para evitar faixa preta
+        }}
+      >
+        <source src="/assets/vd-bglogin.mp4" type="video/mp4" />
+        {/* Se quiser, adicione um .webm para fallback */}
+      </video>
       <GlassCard>
         <HeaderSection>
           <LogoWrapper style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>

@@ -19,8 +19,25 @@ export const LoginContainer = styled.div`
   height: 100vh;
   width: 100vw;
   background-color: #0f1117;
+  background-image: url('/assets/gif-login.gif');
+  background-size: 100% 100%;
+  background-position: top;
+  background-repeat: no-repeat;
   position: relative;
   overflow: hidden;
+
+  /* Overlay escuro para o gif */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 17, 23, 0.88);
+    pointer-events: none;
+    z-index: 1;
+  }
 
   /* Ambient Orbs */
   &::before, &::after {
@@ -50,25 +67,26 @@ export const LoginContainer = styled.div`
   }
 `;
 
+import { ds } from '../../styles/designSystem';
+
 export const GlassCard = styled.div`
-  background: rgba(26, 29, 39, 0.4);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 32px;
-  padding: 4rem;
+  background: rgba(26, 29, 39, 0.48);
+  backdrop-filter: blur(22px) saturate(1.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.10);
+  border-radius: ${ds.radius.xl};
+  padding: ${ds.spacing.xl};
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3rem;
+  gap: ${ds.spacing.lg};
   z-index: 10;
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: ${ds.shadow.lg};
+  transition: box-shadow 0.22s, border 0.22s, background 0.22s;
 
   @media (max-width: 768px) {
-    padding: 2.5rem;
-    width: 90%;
-    max-width: 400px;
+    padding: ${ds.spacing.lg};
+    width: 92%;
+    max-width: 420px;
   }
 `;
 
