@@ -72,6 +72,7 @@ const EstiloForm: React.FC<EstiloFormProps> = ({
           <Select label="Linha" name="linha" value={dados.linha} onChange={handleSelect} options={LINHA_OPTIONS} />
           <Select label="Sexo" name="sexo" value={dados.sexo} onChange={handleSelect} options={SEXO_OPTIONS} />
           <Select label="Coleção de Origem" name="colecaoOrigem" value={dados.colecaoOrigem} onChange={handleSelect} options={COLECAO_OPTIONS} />
+          <Input label="Ano" id="ano" name="ano" value={dados.ano} onChange={handleInput} placeholder="Ano da coleção" />
         </FormGrid>
       </FormSection>
 

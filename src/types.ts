@@ -9,8 +9,7 @@ export type UserRole = 'estilo' | 'compras';
 // Status do produto no fluxo
 export type ProductStatus =
   | 'EM_DESENVOLVIMENTO'
-  | 'CADASTRADO_AGUARDANDO_COMPRAS'
-  | 'EM_COMPLEMENTO_COMPRAS'
+  | 'ESTILO_CONCLUIDO'
   | 'FINALIZADO';
 
 // Dados preenchidos pelo Estilo
@@ -21,6 +20,7 @@ export interface DadosEstilo {
   linha: string;
   sexo: string;
   colecaoOrigem: string;
+  ano: string;
 
   // ── Referência ──
   referencia: string;
@@ -159,6 +159,7 @@ export const INITIAL_DADOS_ESTILO: DadosEstilo = {
   linha: '',
   sexo: 'Masculino',
   colecaoOrigem: '',
+  ano: '',
   referencia: '',
   refLacreFornecedor: '',
   modeloAra: '',

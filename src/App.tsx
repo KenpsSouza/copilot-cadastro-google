@@ -153,16 +153,24 @@ function App() {
       alert('Preencha pelo menos BU, Griffe, Grupo e Subgrupo antes de enviar.');
       return;
     }
-    const updated: FormData = { ...formData, status: 'CADASTRADO_AGUARDANDO_COMPRAS', id: formData.id || 'PROD-' + Date.now(), criadoEm: formData.criadoEm || new Date().toISOString(), atualizadoEm: new Date().toISOString() };
+    const updated: FormData = { 
+      ...formData, 
+      status: 'ESTILO_CONCLUIDO', 
+      id: formData.id || 'PROD-' + Date.now(), 
+      criadoEm: formData.criadoEm || new Date().toISOString(), 
+      atualizadoEm: new Date().toISOString() 
+    };
     setFormData(updated);
     await upsertProduct(updated);
     alert('Produto enviado para Compras com sucesso! Status: Aguardando Compras');
+    setCurrentView('list');
   }, [formData, upsertProduct]);
 
   const handleCancelarEstilo = useCallback(() => {
     if (window.confirm('Deseja cancelar? Os dados não salvos serão perdidos.')) {
       setFormData({ ...INITIAL_FORM_DATA });
       setValidation(INITIAL_VALIDATION);
+      setCurrentView('list');
     }
   }, []);
 
@@ -193,6 +201,18 @@ function App() {
   const handleLogout = () => { setUserRole(null); setCurrentView('list'); setFormData({ ...INITIAL_FORM_DATA }); setValidation(INITIAL_VALIDATION); };
   const handleNewProduct = () => { setFormData({ ...INITIAL_FORM_DATA }); setValidation(INITIAL_VALIDATION); setShowDescriptionCard(true); setDescriptionCardExiting(false); setDescriptionText(''); setCurrentView('form'); };
   const handleSelectProduct = (product: FormData) => { setFormData(product); setShowDescriptionCard(false); setCurrentView('form'); };
+  const handleDeleteProduct = useCallback(async (productId: string) => {
+    if (window.confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.')) {
+      try {
+        const response = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
+        if (!response.ok) throw new Error('Falha ao excluir o produto no servidor.');
+        setProducts(prev => prev.filter(p => p.id !== productId));
+      } catch (error) {
+        console.error("Delete product error:", error);
+        alert('Erro ao excluir o produto.');
+      }
+    }
+  }, []);
 
   if (!userRole) return <ThemeProvider theme={theme}><GlobalStyles /><LoginPage onLogin={handleLogin} /></ThemeProvider>;
 
@@ -202,7 +222,7 @@ function App() {
       <AppContainer>
         <Header userRole={userRole} onLogout={handleLogout} onNewProduct={handleNewProduct} showBack={currentView === 'form'} onBack={() => setCurrentView('list')} />
         {currentView === 'list' ? (
-          <MainContent style={{ display: 'block' }}><ListagemProdutos products={products} userRole={userRole} onNewProduct={handleNewProduct} onSelectProduct={handleSelectProduct} /></MainContent>
+          <MainContent style={{ display: 'block' }}><ListagemProdutos products={products} userRole={userRole} onNewProduct={handleNewProduct} onSelectProduct={handleSelectProduct} onDeleteProduct={handleDeleteProduct} /></MainContent>
         ) : (
           <>
             <MainContent>

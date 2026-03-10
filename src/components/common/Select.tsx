@@ -1,12 +1,10 @@
 import React from 'react';
-// Correcting the import path based on our previous change
-import { InputWrapper, Label, ErrorMessage } from './Input.styles';
-import { StyledSelect } from './Input.styles';
+import { InputWrapper, Label, ErrorMessage, StyledSelect } from './Input.styles';
 
 type OptionItem = string | { value: string; label: string };
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-    label: string;
+    label: React.ReactNode; // Corrigido de string para React.ReactNode
     options: OptionItem[];
     placeholder?: string;
     error?: boolean;
@@ -34,7 +32,7 @@ export const Select: React.FC<SelectProps> = ({ label, name, value, onChange, op
                 data-error={!!error}
                 {...rest}
             >
-                <option value="">{placeholder || `Selecione ${label.toLowerCase()}`}</option>
+                <option value="">{placeholder || `Selecione...`}</option>
                 {options.map(opt => (
                     <option key={getOptionValue(opt)} value={getOptionValue(opt)}>
                         {getOptionLabel(opt)}
