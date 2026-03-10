@@ -182,10 +182,19 @@ function App() {
   }, [formData]);
 
   const handleFinalizarCompras = useCallback(async () => {
-    // ... (lógica de finalização de compras)
+    if (window.confirm('Tem certeza que deseja finalizar o cadastro deste produto? Esta ação não poderá ser desfeita.')) {
+      const updated: FormData = { 
+        ...formData, 
+        status: 'FINALIZADO', 
+        atualizadoEm: new Date().toISOString() 
+      };
+      setFormData(updated);
+      await upsertProduct(updated);
+      alert('Produto finalizado com sucesso!');
+      setCurrentView('list');
+    }
   }, [formData, upsertProduct]);
   
-  // ... (Restante do App.tsx)
 
   const handleSalvarFichaPainel = useCallback((fichaAtualizada: FichaColecao) => {
     const fichasAtualizadas = formData.fichasColecao ? formData.fichasColecao.map(f => f.id === fichaAtualizada.id ? fichaAtualizada : f) : [fichaAtualizada];
