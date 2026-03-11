@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Zap, Send, X } from 'react-feather';
+import React, { useMemo, useState } from 'react';
+import { Zap, Send, X, Info } from 'react-feather';
 import {
   FormData, DadosEstilo,
   BU_OPTIONS, GRIFFE_OPTIONS, LINHA_OPTIONS, SEXO_OPTIONS, COLECAO_OPTIONS,
@@ -32,7 +32,24 @@ interface EstiloFormProps {
 const EstiloForm: React.FC<EstiloFormProps> = ({
   formData, onChange, onValidarIA, onEnviarCompras, onCancelar, isValidating,
 }) => {
-  const dados = formData.dadosEstilo;
+  const dados = formData.dadosEstilo as DadosEstilo;
+
+  // Definição dos campos obrigatórios para validação e feedback visual
+  const obrigatorios = {
+    bu: !dados.bu,
+    griffe: !dados.griffe,
+    linha: !dados.linha,
+    sexo: !dados.sexo,
+    colecaoOrigem: !dados.colecaoOrigem,
+    ano: !dados.ano,
+    grupo: !dados.grupo,
+    subgrupo: !dados.subgrupo,
+    referencia: !dados.referencia,
+    nomeProduto: !dados.nomeProduto,
+    composicao: !dados.composicao,
+    conceito: !dados.conceito,
+    observacoes: !dados.observacoes,
+  };
 
   const grupos = useMemo(() => getGrupos(), []);
   const subgruposFiltrados = useMemo(() => getSubgrupos(dados.grupo), [dados.grupo]);
@@ -56,6 +73,20 @@ const EstiloForm: React.FC<EstiloFormProps> = ({
 
   const camposObrigatoriosPreenchidos = dados.bu && dados.griffe && dados.grupo && dados.subgrupo;
 
+  // Dicas contextuais para campos obrigatórios
+  const dicasCampos: Record<string, string> = {
+    bu: 'Escolha a BU responsável pelo produto.',
+    griffe: 'Selecione a griffe/marca do produto.',
+    grupo: 'Escolha o grupo principal do produto.',
+    subgrupo: 'Escolha o subgrupo relacionado ao grupo.',
+    referencia: 'Digite o código de referência do produto.',
+    nomeProduto: 'Informe um nome claro e padronizado.',
+    composicao: 'Descreva a composição principal do produto.',
+    conceito: 'Explique a inspiração ou diferencial do produto.',
+    observacoes: 'Inclua observações ou requisitos especiais.',
+  };
+  const [campoFocado, setCampoFocado] = useState<string | null>(null);
+
   return (
     <FormContainer>
 
@@ -67,12 +98,84 @@ const EstiloForm: React.FC<EstiloFormProps> = ({
           Identificação<RequiredMark>*</RequiredMark>
         </SectionTitle>
         <FormGrid>
-          <Select label={<>BU<RequiredMark>*</RequiredMark></>} name="bu" value={dados.bu} onChange={handleSelect} options={BU_OPTIONS} placeholder="Selecione a BU" />
-          <Select label={<>Griffe<RequiredMark>*</RequiredMark></>} name="griffe" value={dados.griffe} onChange={handleSelect} options={GRIFFE_OPTIONS} placeholder="Selecione a Griffe" />
-          <Select label="Linha" name="linha" value={dados.linha} onChange={handleSelect} options={LINHA_OPTIONS} />
-          <Select label="Sexo" name="sexo" value={dados.sexo} onChange={handleSelect} options={SEXO_OPTIONS} />
-          <Select label="Coleção de Origem" name="colecaoOrigem" value={dados.colecaoOrigem} onChange={handleSelect} options={COLECAO_OPTIONS} />
-          <Input label="Ano" id="ano" name="ano" value={dados.ano} onChange={handleInput} placeholder="Ano da coleção" />
+          <Select
+            label={<>BU<RequiredMark>*</RequiredMark></>}
+            name="bu"
+            value={dados.bu}
+            onChange={handleSelect}
+            options={BU_OPTIONS}
+            placeholder="Selecione a BU"
+            error={obrigatorios.bu && (campoFocado === 'bu' || isValidating)}
+            aria-invalid={obrigatorios.bu}
+            aria-required="true"
+            onFocus={() => setCampoFocado('bu')}
+            onBlur={() => setCampoFocado(null)}
+          />
+          <Select
+            label={<>Griffe<RequiredMark>*</RequiredMark></>}
+            name="griffe"
+            value={dados.griffe}
+            onChange={handleSelect}
+            options={GRIFFE_OPTIONS}
+            placeholder="Selecione a Griffe"
+            error={obrigatorios.griffe && (campoFocado === 'griffe' || isValidating)}
+            aria-invalid={obrigatorios.griffe}
+            aria-required="true"
+            onFocus={() => setCampoFocado('griffe')}
+            onBlur={() => setCampoFocado(null)}
+          />
+          <Select
+            label={<>Linha<RequiredMark>*</RequiredMark></>}
+            name="linha"
+            value={dados.linha}
+            onChange={handleSelect}
+            options={LINHA_OPTIONS}
+            placeholder="Selecione..."
+            error={obrigatorios.linha && (campoFocado === 'linha' || isValidating)}
+            aria-invalid={obrigatorios.linha}
+            aria-required="true"
+            onFocus={() => setCampoFocado('linha')}
+            onBlur={() => setCampoFocado(null)}
+          />
+          <Select
+            label={<>Sexo<RequiredMark>*</RequiredMark></>}
+            name="sexo"
+            value={dados.sexo ?? ''}
+            onChange={handleSelect}
+            options={SEXO_OPTIONS}
+            placeholder="Selecione..."
+            error={obrigatorios.sexo && !dados.sexo && (campoFocado === 'sexo' || isValidating)}
+            aria-invalid={obrigatorios.sexo && !dados.sexo}
+            aria-required="true"
+            onFocus={() => setCampoFocado('sexo')}
+            onBlur={() => setCampoFocado(null)}
+          />
+          <Select
+            label={<>Coleção de Origem<RequiredMark>*</RequiredMark></>}
+            name="colecaoOrigem"
+            value={dados.colecaoOrigem}
+            onChange={handleSelect}
+            options={COLECAO_OPTIONS}
+            placeholder="Selecione..."
+            error={obrigatorios.colecaoOrigem && (campoFocado === 'colecaoOrigem' || isValidating)}
+            aria-invalid={obrigatorios.colecaoOrigem}
+            aria-required="true"
+            onFocus={() => setCampoFocado('colecaoOrigem')}
+            onBlur={() => setCampoFocado(null)}
+          />
+          <Input
+            label={<>Ano<RequiredMark>*</RequiredMark></>}
+            id="ano"
+            name="ano"
+            value={dados.ano}
+            onChange={handleInput}
+            placeholder="Ano da coleção"
+            error={obrigatorios.ano && (campoFocado === 'ano' || isValidating)}
+            aria-invalid={obrigatorios.ano}
+            aria-required="true"
+            onFocus={() => setCampoFocado('ano')}
+            onBlur={() => setCampoFocado(null)}
+          />
         </FormGrid>
       </FormSection>
 
@@ -82,10 +185,58 @@ const EstiloForm: React.FC<EstiloFormProps> = ({
       <FormSection>
         <SectionTitle>Referência</SectionTitle>
         <FormGrid>
-          <Input label="Referência" id="referencia" name="referencia" value={dados.referencia} onChange={handleInput} placeholder="Código de referência" />
-          <Input label="Ref / Lacre Fornecedor" id="refLacreFornecedor" name="refLacreFornecedor" value={dados.refLacreFornecedor} onChange={handleInput} placeholder="Ref. ou lacre do fornecedor" />
-          <Input label="Modelo (Aramis)" id="modeloAra" name="modeloAra" value={dados.modeloAra} onChange={handleInput} placeholder="Modelo Aramis" />
-          <Input label="Modelo" id="modelo" name="modelo" value={dados.modelo} onChange={handleInput} placeholder="Código do modelo" />
+          <div style={{ width: '100%' }}>
+            <Input
+              label="Referência"
+              id="referencia"
+              name="referencia"
+              value={dados.referencia}
+              onChange={handleInput}
+              placeholder="Código de referência"
+              error={obrigatorios.referencia && !dados.referencia && (campoFocado === 'referencia' || isValidating)}
+              aria-invalid={obrigatorios.referencia && !dados.referencia}
+              aria-required="true"
+              aria-describedby={obrigatorios.referencia && !dados.referencia ? 'dica-referencia' : undefined}
+              onFocus={() => setCampoFocado('referencia')}
+              onBlur={() => setCampoFocado(null)}
+            />
+            {campoFocado === 'referencia' && obrigatorios.referencia && !dados.referencia && (
+              <span id="dica-referencia" style={{ color: '#f59e42', fontSize: '0.85em', marginLeft: 2 }}>{dicasCampos.referencia}</span>
+            )}
+          </div>
+          {/* Campo Código de Referência Principal (apenas leitura, visual ainda mais organizado) */}
+          <div style={{ width: '100%', marginTop: 18, marginBottom: 2 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <Info size={17} color="#818cf8" style={{ verticalAlign: 'middle' }} />
+              <span style={{ fontSize: '1em', color: '#a1a1aa', fontWeight: 600, letterSpacing: 0.2 }}>Código de Referência Principal</span>
+              <span style={{ fontSize: '0.85em', color: '#818cf8', fontStyle: 'italic', marginLeft: 8 }}>
+                (Gerado automaticamente pelo sistema após integração)
+              </span>
+            </div>
+            <div style={{ background: 'rgba(129,140,248,0.07)', border: '1.5px dashed #818cf8', borderRadius: 8, padding: '0.7em 1em', display: 'flex', alignItems: 'center', minHeight: 44 }}>
+              <input
+                type="text"
+                value={dados.codigoReferenciaPrincipal || ''}
+                placeholder="Será gerado automaticamente após integração"
+                readOnly
+                disabled={!dados.codigoReferenciaPrincipal}
+                style={{
+                  width: '100%',
+                  background: 'transparent',
+                  color: '#a1a1aa',
+                  fontStyle: 'italic',
+                  fontSize: '1em',
+                  border: 'none',
+                  outline: 'none',
+                  letterSpacing: '0.01em',
+                  opacity: dados.codigoReferenciaPrincipal ? 1 : 0.7
+                }}
+                tabIndex={-1}
+                aria-readonly="true"
+                aria-label="Código de Referência Principal (gerado automaticamente)"
+              />
+            </div>
+          </div>
         </FormGrid>
       </FormSection>
 
@@ -98,8 +249,29 @@ const EstiloForm: React.FC<EstiloFormProps> = ({
         </SectionTitle>
         <FormGrid>
           <Select label="Grade" name="grade" value={dados.grade} onChange={handleSelect} options={GRADE_OPTIONS} placeholder="Selecione a grade" />
-          <Select label={<>Grupo<RequiredMark>*</RequiredMark></>} name="grupo" value={dados.grupo} onChange={handleSelect} options={grupos} placeholder="Selecione o grupo" />
-          <Select label={<>Subgrupo<RequiredMark>*</RequiredMark></>} name="subgrupo" value={dados.subgrupo} onChange={handleSelect} options={subgruposFiltrados} disabled={!dados.grupo} placeholder={dados.grupo ? 'Selecione o subgrupo' : 'Selecione um grupo primeiro'} />
+          <Select
+            label={<>Grupo<RequiredMark>*</RequiredMark></>}
+            name="grupo"
+            value={dados.grupo}
+            onChange={handleSelect}
+            options={grupos}
+            placeholder="Selecione o grupo"
+            error={obrigatorios.grupo && (isValidating)}
+            aria-invalid={obrigatorios.grupo}
+            aria-required="true"
+          />
+          <Select
+            label={<>Subgrupo<RequiredMark>*</RequiredMark></>}
+            name="subgrupo"
+            value={dados.subgrupo}
+            onChange={handleSelect}
+            options={subgruposFiltrados}
+            disabled={!dados.grupo}
+            placeholder={dados.grupo ? 'Selecione o subgrupo' : 'Selecione um grupo primeiro'}
+            error={obrigatorios.subgrupo && (isValidating)}
+            aria-invalid={obrigatorios.subgrupo}
+            aria-required="true"
+          />
           <Select label="Modelagem" name="modelagem" value={dados.modelagem} onChange={handleSelect} options={MODELAGEM_OPTIONS} />
           <Input label="Base MP" id="baseMP" name="baseMP" value={dados.baseMP} onChange={handleInput} placeholder="Base matéria-prima" />
           <Select label="Tipo" name="tipo" value={dados.tipo} onChange={handleSelect} options={TIPO_OPTIONS} />

@@ -86,6 +86,9 @@ export interface DadosEstilo {
   conceito: string;
   observacoes: string;
   pedidoAmostras: string;
+
+  // ── Integração PLM ──
+  codigoReferenciaPrincipal?: string;
 }
 
 // Ficha de Coleção (Compras)
@@ -157,7 +160,7 @@ export const INITIAL_DADOS_ESTILO: DadosEstilo = {
   bu: '',
   griffe: '',
   linha: '',
-  sexo: 'Masculino',
+  sexo: '',
   colecaoOrigem: '',
   ano: '',
   referencia: '',
@@ -205,6 +208,7 @@ export const INITIAL_DADOS_ESTILO: DadosEstilo = {
   conceito: '',
   observacoes: '',
   pedidoAmostras: '',
+  codigoReferenciaPrincipal: '',
 };
 
 // Estado inicial vazio para Compras

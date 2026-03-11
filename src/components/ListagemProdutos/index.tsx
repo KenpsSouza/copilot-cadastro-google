@@ -153,22 +153,22 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
         </SearchWrapper>
 
         <FilterSelect value={collectionFilter} onChange={e => setCollectionFilter(e.target.value)} $active={collectionFilter !== ""}>
-          <option value="">Todas as Coleções</option>
+          <option value="">Coleção</option>
           {uniqueCollections.map(c => <option key={c} value={c}>{c}</option>)}
         </FilterSelect>
 
         <FilterSelect value={groupFilter} onChange={e => setGroupFilter(e.target.value)} $active={groupFilter !== ""}>
-          <option value="">Todos os Grupos</option>
+          <option value="">Grupo</option>
           {uniqueGroups.map(g => <option key={g} value={g}>{g}</option>)}
         </FilterSelect>
 
         <FilterSelect value={yearFilter} onChange={e => setYearFilter(e.target.value)} $active={yearFilter !== ""}>
-          <option value="">Todos os Anos</option>
+          <option value="">Ano</option>
           {uniqueYears.map(y => <option key={y} value={y}>{y}</option>)}
         </FilterSelect>
 
         <FilterSelect value={monthFilter} onChange={e => setMonthFilter(e.target.value)} $active={monthFilter !== ""}>
-          <option value="">Todos os Meses</option>
+          <option value="">Mês</option>
           {MESES.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
         </FilterSelect>
 
@@ -190,18 +190,19 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
             border: 'none',
             color: '#9ca3af',
             fontWeight: 500,
-            fontSize: '1rem',
+            fontSize: '0.95rem',
             cursor: 'pointer',
-            marginLeft: 'auto',
-            padding: '0.5rem 1rem',
-            borderRadius: 20,
+            padding: '0.2rem 0.7rem',
+            borderRadius: 12,
+            height: '32px',
+            minHeight: 'unset',
             transition: 'color 0.18s, background 0.18s',
           }}
           title="Limpar Filtros"
           onMouseOver={e => (e.currentTarget.style.color = '#fff')}
           onMouseOut={e => (e.currentTarget.style.color = '#9ca3af')}
         >
-          <XCircle size={18} color="#9ca3af" style={{ marginRight: 4 }} /> Limpar filtros
+          <XCircle size={16} color="#9ca3af" style={{ marginRight: 4 }} /> Limpar filtros
         </button>
       </FiltersContainer>
       
@@ -224,7 +225,7 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
               $active={statusFilter === 'ESTILO_CONCLUIDO'} 
               onClick={() => setStatusFilter('ESTILO_CONCLUIDO')}
             >
-              <span style={{ color: statusFilter === 'ESTILO_CONCLUIDO' ? '#111827' : undefined }}>Estilo</span>
+              <span>Estilo</span>
               <CheckCircle size={16} color="#22c55e" strokeWidth={2} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
             </FilterButton>
             <FilterButton 

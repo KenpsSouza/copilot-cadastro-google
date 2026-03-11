@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { InputWrapper, Label, StyledInput, StyledTextArea, ErrorMessage } from './Input.styles';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label: React.ReactNode;
   error?: boolean;
   errorMessage?: string;
 }

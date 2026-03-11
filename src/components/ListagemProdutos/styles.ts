@@ -208,7 +208,7 @@ export const ActionButton = styled.button`
 
 export const FiltersContainer = styled.div`
     display: flex;
-    flex-wrap: wrap; // Allows filters to wrap on smaller screens
+    flex-wrap: nowrap;
     gap: 1rem;
     margin-bottom: 2rem;
     align-items: center;
@@ -247,7 +247,7 @@ export const SearchInput = styled.input`
 export const FilterButton = styled.button<{$active: boolean}>`
     background: ${({ $active }) => $active ? 'rgba(236, 72, 153, 0.2)' : 'rgba(0,0,0,0.2)'};
     border: 1px solid ${({ $active }) => $active ? '#ec4899' : 'rgba(255,255,255,0.1)'};
-    color: ${({ $active }) => $active ? '#ec4899' : '#9ca3af'};
+    color: ${({ $active }) => $active ? '#fff' : '#9ca3af'};
     padding: 0.7rem 1rem;
     border-radius: 8px;
     cursor: pointer;
@@ -264,13 +264,13 @@ export const FilterButton = styled.button<{$active: boolean}>`
 `;
 
 export const FilterSelect = styled.select<{ $active?: boolean }>`
-    width: 180px;
+    width: 175px;
     background: rgba(26, 29, 39, 0.85);
     border: 2px solid
         ${({ $active }) => $active ? '#ec4899' : 'rgba(255,255,255,0.18)'};
     color: #f3f4f6;
-    padding: 0.75rem 2.5rem 0.75rem 1rem;
-    border-radius: 12px;
+    padding: 0.38rem 2.2rem 0.38rem 1rem;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 1rem;
     outline: none;
@@ -279,7 +279,7 @@ export const FilterSelect = styled.select<{ $active?: boolean }>`
     background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%239ca3af" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>');
     background-repeat: no-repeat;
     background-position: right 1rem center;
-    background-size: 1.2em;
+    background-size: 1.15em;
     transition: border 0.18s, box-shadow 0.18s, background 0.18s;
 
     &:hover {
