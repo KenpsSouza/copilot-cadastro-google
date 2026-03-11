@@ -20,8 +20,21 @@ export const Title = styled.h1`
 
 export const Grid = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: ${ds.spacing.lg};
+
+    @media (max-width: 1400px) {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    @media (max-width: 1100px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 800px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    @media (max-width: 500px) {
+        grid-template-columns: 1fr;
+    }
 `;
 
 export const Card = styled.div`
@@ -70,6 +83,9 @@ export const ProductCategory = styled.p`
 `;
 
 export const StatusTag = styled.span<{$status?: string}>`
+    & > span {
+        color: #fff !important;
+    }
     font-size: 0.75rem;
     font-weight: 600;
     padding: 0.25rem 0.6rem;
@@ -77,17 +93,22 @@ export const StatusTag = styled.span<{$status?: string}>`
     text-transform: uppercase;
     white-space: nowrap;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
 
     ${({ $status }) => {
         switch ($status) {
             case 'EM_DESENVOLVIMENTO':
-                return `background-color: #3b82f6; color: #fff;`; // blue-500
+                return `background-color: #3b82f6; color: #fff;`;
+            case 'ESTILO_CONCLUIDO':
+                return `background: none; color: #fff !important; border: 2px solid #f97316;`;
             case 'LIBERADO_PARA_COMPRAS':
-                return `background-color: #f97316; color: #fff;`; // orange-500
+                return `background-color: #f97316; color: #fff;`;
             case 'FINALIZADO':
-                return `background-color: #16a34a; color: #fff;`; // green-600
+                return `background: none; color: #fff !important; border: 2px solid #22c55e;`;
             default:
-                return `background-color: #6b7280; color: #fff;`; // gray-500
+                return `background-color: #6b7280; color: #fff;`;
         }
     }}
 `;
@@ -232,6 +253,9 @@ export const FilterButton = styled.button<{$active: boolean}>`
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
 
     &:hover {
         background: rgba(236, 72, 153, 0.1);
@@ -239,23 +263,42 @@ export const FilterButton = styled.button<{$active: boolean}>`
     }
 `;
 
-export const FilterSelect = styled.select`
-    background: rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #9ca3af;
-    padding: 0.7rem 1rem;
-    border-radius: 8px;
+export const FilterSelect = styled.select<{ $active?: boolean }>`
+    width: 180px;
+    background: rgba(26, 29, 39, 0.85);
+    border: 2px solid
+        ${({ $active }) => $active ? '#ec4899' : 'rgba(255,255,255,0.18)'};
+    color: #f3f4f6;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1rem;
     outline: none;
-    transition: all 0.2s;
+    box-shadow: 0 2px 8px 0 rgba(31,38,135,0.08);
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%239ca3af" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2em;
+    transition: border 0.18s, box-shadow 0.18s, background 0.18s;
 
     &:hover {
-      border-color: #9ca3af;
+        border-color: #ec4899;
+        background: rgba(26, 29, 39, 0.95);
+        color: #fff;
     }
 
     &:focus {
-        border-color: #ec4899;
+        border-color: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34,197,94,0.13);
+        background: rgba(26, 29, 39, 1);
+        color: #fff;
+    }
+
+    option {
+        color: #111827;
+        background: #f3f4f6;
+        font-size: 1rem;
     }
 `;
 

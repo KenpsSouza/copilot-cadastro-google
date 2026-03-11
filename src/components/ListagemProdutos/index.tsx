@@ -9,7 +9,7 @@ import {
   ProgressContainer, ProgressBar, ProgressLabel, 
   FooterActions, FooterActionText, FooterIconButton
 } from './styles';
-import { Plus, Clock, Edit3, ShoppingBag, Search, CheckCircle, Trash2 } from 'react-feather';
+import { Plus, Clock, Edit3, ShoppingBag, Search, CheckCircle, Trash2, XCircle } from 'react-feather';
 
 interface ListagemProdutosProps {
   products: FormData[];
@@ -102,11 +102,12 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
           return false;
         }
       }
-      if (searchTerm) {
-        const term = searchTerm.toLowerCase();
-        const nameMatch = p.dadosEstilo.nomeProduto?.toLowerCase().includes(term);
-        const idMatch = p.id?.toLowerCase().includes(term);
-        if (!nameMatch && !idMatch) return false;
+          if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            const refMatch = p.dadosEstilo.referencia?.toLowerCase().includes(term);
+            const nameMatch = p.dadosEstilo.nomeProduto?.toLowerCase().includes(term);
+            const idMatch = p.id?.toLowerCase().includes(term);
+            if (!refMatch && !nameMatch && !idMatch) return false;
       }
       return true;
     });
@@ -141,35 +142,67 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
         )}
       </ListHeader>
 
-      <FiltersContainer>
+      <FiltersContainer style={{ flexWrap: 'wrap', alignItems: 'center', gap: '1rem', position: 'relative' }}>
         <SearchWrapper>
           <Search size={16} />
-          <SearchInput 
-            placeholder="Buscar por nome ou ID..." 
+              <SearchInput
+                placeholder="Buscar por Referência, Nome ou ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </SearchWrapper>
 
-        <FilterSelect value={collectionFilter} onChange={e => setCollectionFilter(e.target.value)}>
-          <option value="">Toda as Coleções</option>
+        <FilterSelect value={collectionFilter} onChange={e => setCollectionFilter(e.target.value)} $active={collectionFilter !== ""}>
+          <option value="">Todas as Coleções</option>
           {uniqueCollections.map(c => <option key={c} value={c}>{c}</option>)}
         </FilterSelect>
 
-        <FilterSelect value={groupFilter} onChange={e => setGroupFilter(e.target.value)}>
+        <FilterSelect value={groupFilter} onChange={e => setGroupFilter(e.target.value)} $active={groupFilter !== ""}>
           <option value="">Todos os Grupos</option>
           {uniqueGroups.map(g => <option key={g} value={g}>{g}</option>)}
         </FilterSelect>
 
-        <FilterSelect value={yearFilter} onChange={e => setYearFilter(e.target.value)}>
+        <FilterSelect value={yearFilter} onChange={e => setYearFilter(e.target.value)} $active={yearFilter !== ""}>
           <option value="">Todos os Anos</option>
           {uniqueYears.map(y => <option key={y} value={y}>{y}</option>)}
         </FilterSelect>
 
-        <FilterSelect value={monthFilter} onChange={e => setMonthFilter(e.target.value)}>
+        <FilterSelect value={monthFilter} onChange={e => setMonthFilter(e.target.value)} $active={monthFilter !== ""}>
           <option value="">Todos os Meses</option>
           {MESES.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
         </FilterSelect>
+
+        <button
+          type="button"
+          onClick={() => {
+            setSearchTerm('');
+            setCollectionFilter('');
+            setGroupFilter('');
+            setYearFilter('');
+            setMonthFilter('');
+            setStatusFilter('TODOS');
+          }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            background: 'none',
+            border: 'none',
+            color: '#9ca3af',
+            fontWeight: 500,
+            fontSize: '1rem',
+            cursor: 'pointer',
+            marginLeft: 'auto',
+            padding: '0.5rem 1rem',
+            borderRadius: 20,
+            transition: 'color 0.18s, background 0.18s',
+          }}
+          title="Limpar Filtros"
+          onMouseOver={e => (e.currentTarget.style.color = '#fff')}
+          onMouseOut={e => (e.currentTarget.style.color = '#9ca3af')}
+        >
+          <XCircle size={18} color="#9ca3af" style={{ marginRight: 4 }} /> Limpar filtros
+        </button>
       </FiltersContainer>
       
       <FiltersContainer>
@@ -179,7 +212,6 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
         >
           Todos
         </FilterButton>
-        
         {userRole === 'estilo' ? (
           <>
             <FilterButton 
@@ -192,13 +224,15 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
               $active={statusFilter === 'ESTILO_CONCLUIDO'} 
               onClick={() => setStatusFilter('ESTILO_CONCLUIDO')}
             >
-              Aguardando Compras
+              <span style={{ color: statusFilter === 'ESTILO_CONCLUIDO' ? '#111827' : undefined }}>Estilo</span>
+              <CheckCircle size={16} color="#22c55e" strokeWidth={2} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
             </FilterButton>
-             <FilterButton 
+            <FilterButton 
               $active={statusFilter === 'FINALIZADO'} 
               onClick={() => setStatusFilter('FINALIZADO')}
             >
-              Finalizado
+              <span style={{ color: statusFilter === 'FINALIZADO' ? '#fff' : undefined }}>Finalizado</span>
+              <CheckCircle size={16} color="#22c55e" strokeWidth={2} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
             </FilterButton>
           </>
         ) : (
@@ -207,13 +241,15 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
               $active={statusFilter === 'ESTILO_CONCLUIDO'} 
               onClick={() => setStatusFilter('ESTILO_CONCLUIDO')}
             >
-              Aguardando Ação
+              <span style={{ color: statusFilter === 'ESTILO_CONCLUIDO' ? '#111827' : undefined }}>Estilo</span>
+              <CheckCircle size={16} color="#22c55e" strokeWidth={2} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
             </FilterButton>
             <FilterButton 
               $active={statusFilter === 'FINALIZADO'} 
               onClick={() => setStatusFilter('FINALIZADO')}
             >
-              Finalizado
+              <span style={{ color: statusFilter === 'FINALIZADO' ? '#fff' : undefined }}>Finalizado</span>
+              <CheckCircle size={16} color="#22c55e" strokeWidth={2} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
             </FilterButton>
           </>
         )}
@@ -237,7 +273,19 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
                   </ProductCategory>
                 </ProductInfo>
                 <StatusTag $status={product.status}>
-                  {getStatusLabel(product.status)}
+                  {product.status === 'ESTILO_CONCLUIDO' ? (
+                    <>
+                      <span style={{ color: '#111827' }}>Estilo</span>
+                      <CheckCircle size={16} color="#22c55e" strokeWidth={2} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
+                    </>
+                  ) : product.status === 'FINALIZADO' ? (
+                    <>
+                      <span style={{ color: '#fff' }}>Finalizado</span>
+                      <CheckCircle size={16} color="#22c55e" strokeWidth={2} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
+                    </>
+                  ) : (
+                    getStatusLabel(product.status)
+                  )}
                 </StatusTag>
               </CardHeader>
 
@@ -262,14 +310,7 @@ const ListagemProdutos: React.FC<ListagemProdutosProps> = ({
                   <span className="value">{product.dadosEstilo.linha || '-'}</span>
                 </InfoRow>
 
-                {product.status !== 'EM_DESENVOLVIMENTO' && (
-                  <InfoRow>
-                    <span className="label">Preço:</span>
-                    <span className="value">
-                      {product.dadosCompras.preco ? `R$ ${product.dadosCompras.preco}` : '-'}
-                    </span>
-                  </InfoRow>
-                )}
+                {/* Preço removido da pré-visualização */}
               </CardBody>
 
               <CardFooter>
